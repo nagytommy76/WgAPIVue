@@ -1,0 +1,42 @@
+nav{
+    padding: 1.2rem;
+    background: #333;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+
+    .navbar-brand{
+        font-size: 1.1rem;
+    }
+    .right{
+        display: flex;
+        flex-direction: row;
+        .navbar-nav{
+            display: flex;
+            flex-direction: row;
+            .nav-item{
+                padding: 1rem;
+                a{
+                    color: #FFF;
+                    font-size: 1.1rem;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                    letter-spacing: .4rem;
+    
+                    &:hover{
+                        text-decoration: underline;
+                    }
+                }
+                .router-link-exact-active{
+                    color: red;
+                }
+            }
+        }
+        .search{
+            align-self: center;
+        }
+    }
+    
+}
