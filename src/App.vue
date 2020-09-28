@@ -10,7 +10,7 @@
 import Navbar from './views/includes/Navbar'
 export default {
   components:{
-    Navbar
+    Navbar,
   },
   created(){
 

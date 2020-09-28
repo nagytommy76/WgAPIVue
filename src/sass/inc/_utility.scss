@@ -12,3 +12,16 @@ li{
     width: 85%;
     margin: auto;
 }
+
+.form-group{
+    display: flex;
+    flex-direction: column;
+    label{
+        font-size: 1.1rem;
+    }
+    width: 16rem;
+    .form-control{
+        padding: .6rem;
+        font-size: 1.1rem;
+    }
+}
