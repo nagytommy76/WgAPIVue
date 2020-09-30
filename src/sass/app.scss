@@ -1,7 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap');
-
+@import 'inc/_variables';
 @import 'inc/navbar';
+@import 'inc/playerSearch';
 @import 'inc/_utility';
+
 
 *{
     padding: 0;

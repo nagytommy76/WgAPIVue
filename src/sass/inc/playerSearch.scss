@@ -1,0 +1,11 @@
+.player{
+    height: $container-height;
+    display: flex;
+
+    .playerSearch{
+        flex: .6;
+    }
+    .playerData{
+        flex: 2;
+    }
+}

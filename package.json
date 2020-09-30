@@ -1,5 +1,6 @@
 {
-  "name": "wgapi",
+  "name": "wargamingapi",
+  "author": "Nagy Tamás",
   "version": "0.1.0",
   "private": true,
   "scripts": {

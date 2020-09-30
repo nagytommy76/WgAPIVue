@@ -1,69 +1,75 @@
 <template>
-  <div class="home">
+<div class="player">
+  <section class="playerSearch">
     <h1>Searching players...</h1>
-    <div class="form-group">
-      <label for="server">Server</label>
-      <select v-model="server" class="form-control" name="server" id="server">
-        <option value="eu" selected>EU</option>
-        <option value="ru">RU</option>
-        <option value="com">NA</option>
-        <option value="asia">ASIA</option>
-      </select>
-    </div>
+    <ServerSelector />
     <div class="form-group">
       <label for="player">Player nickname</label>
-      <input @keyup="searchUserId" class="form-control" type="text" name="player" id="player">
+      <input @keyup="searchAccountId" class="form-control" type="text" name="player" id="player">
     </div>
-    <div class="form-group" v-show="status">
+    <div class="form-group" v-show="isFound">
       <label for="nicnname">Nicknames: </label>
       <select class="form-control" name="nicname" id="nicname" @change="searchPlayerDetails">
         <option 
           v-bind:value="nick.account_id"
-          v-for="(nick, index) in data" :key="index">
+          v-for="(nick, index) in foundPlayers" :key="index">
             {{nick.nickname}}
         </option>
       </select>
     </div>
-  </div>
+  </section>
+  <section class="playerData" v-show="table">
+    <PlayerData 
+      :player="playerInfo"
+    />
+  </section>
+</div>
 </template>
 
 <script>
 import Wg from '../helpers/Wg';
+import PlayerData from '../components/PlayerData'
+import ServerSelector from '../components/ServerSelector'
 export default {
-  name: 'Players',
+  name: 'Player',
   data() {
     return {
         server: 'eu',
-        playerId: null,
-        status: false,
-        data: [],
+        // accountId: null,
+        playerInfo: {},
+        isFound: false,
+        table: false,
+        foundPlayers: [],
     }
   },
   components: {
-
+    PlayerData,
+    ServerSelector
   },
   methods:{
-    async searchUserId(event){
+    async searchAccountId(event){
       Wg.getPlayerId(this.server, event.target.value)
       .then(response =>{
-        console.log(response)
         if(response.status == 'ok'){
-          this.status = true
-          this.data = response.data
-          if(response.data.length == 1){
-            console.log('ide ha egy találat van')
+          this.isFound = true
+          this.foundPlayers = response.data
+          if(response.meta.count == 1){
+            this.getPlayerDetails(this.foundPlayers[0].account_id)
+            this.table = true
           }
         }
       })
     },
-    async searchPlayerDetails(event){
-      Wg.getPlayerData(this.server, event.target.value)
-      .then(result =>{
-        console.log(result)
-      })
-      // let semmi = 'https://api.worldoftanks.eu/wot/account/info/?application_id=97f4b2c203d63f5db6fd508661fe5ba8&account_id=511400957'
-      // const wg = new Wg(this.server, 'account', 'info', 'search', event.target.value);
+    searchPlayerDetails(event){
+      this.getPlayerDetails(event.target.value)
+      this.table = true
     },
+    getPlayerDetails(account_id){
+      Wg.getPlayerData(this.server, account_id)
+      .then(result =>{ this.playerInfo = result} )
+      .catch(error => console.log(error))
+    }
+
   }
 }
 </script>
