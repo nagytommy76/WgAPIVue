@@ -1,0 +1,16 @@
+.card{
+    padding: 1.4rem;
+    width: 70%;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &-title{
+        font-size: 2rem;
+    }
+    &-dark{
+        color: white;
+        background-color: $dark;
+    }
+}

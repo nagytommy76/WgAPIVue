@@ -6,11 +6,9 @@
         <div class="right">
             <ul class="navbar-nav">
                 <li class="nav-item"><router-link to="/">Players</router-link></li>
-                <li class="nav-item"><router-link to="/about">Clans</router-link></li>
+                <li class="nav-item"><router-link to="/clans">Clans</router-link></li>
+                <li class="nav-item"><router-link to="/vehicles">Vehicles</router-link></li>
             </ul>  
-            <div class="search">
-                <p>Search bar...</p>
-            </div> 
         </div>
              
     </nav>

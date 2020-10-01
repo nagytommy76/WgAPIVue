@@ -1,4 +1,4 @@
-export default class WG{ 
+export default class Player{ 
     static async getPlayerId(server, playerNick){
         let url = `https://api.worldoftanks.${server}/wot/account/list/?application_id=1ebc47797ed02032c3c5489cbba60f6c&search=${playerNick}`;
         let response = await fetch(url, {

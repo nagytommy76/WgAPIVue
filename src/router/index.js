@@ -8,9 +8,14 @@ const routes = [
     component: Player
   },
   {
-    path: '/about',
+    path: '/clans',
     name: 'Clan',
     component: () => import('../views/Clan.vue')
+  },
+  {
+    path: '/vehicles',
+    name: 'Vehicle',
+    component: () => import('../views/Vehicle.vue')
   }
 ]
 
