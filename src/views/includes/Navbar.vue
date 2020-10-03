@@ -8,6 +8,7 @@
                 <li class="nav-item"><router-link to="/">Players</router-link></li>
                 <li class="nav-item"><router-link to="/clans">Clans</router-link></li>
                 <li class="nav-item"><router-link to="/vehicles">Vehicles</router-link></li>
+                <li class="nav-item"><router-link to="/login">LogIn</router-link></li>
             </ul>  
         </div>
              

@@ -1,0 +1,25 @@
+.btn{
+    text-align: center;
+    padding: .7rem 3rem;
+    background: transparent;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    margin: auto;
+    font-size: 1.05rem;
+    border-radius: 5px;
+
+    background-image: -webkit-linear-gradient(0deg,#ff020a 30%,transparent 80%);
+    background-position: 100%;
+    background-size: 400%;
+    -webkit-transition: all 400ms ease-in-out;
+    transition: all 400ms ease-in-out;
+
+    &-primary{
+        background-color: $btnBackground1;
+        color: $btnColor;
+        &:hover{
+            background-position: 0;
+        }
+    }
+}
