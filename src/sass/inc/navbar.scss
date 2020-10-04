@@ -18,6 +18,9 @@ nav{
             flex-direction: row;
             .nav-item{
                 padding: 1rem;
+                .disabled{
+                    cursor: default;
+                }
                 a{
                     color: #FFF;
                     font-size: 1.1rem;

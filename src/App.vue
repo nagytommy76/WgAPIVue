@@ -10,9 +10,20 @@ export default {
   components:{
     Navbar,
   },
-  created(){
-
+  mounted(){
+    // this.loadUserFromLST();
   },
+  methods: {
+    loadUserFromLST(){
+      if (!(Date.now() < this.$store.getters.getExpiresAt)) {
+        // If expires_at larger than date.now
+        this.$store.dispatch('getAndSetToken')
+      }else{
+        // Expired
+
+      }
+    }
+  }
 }
 </script>
 <style lang="scss">

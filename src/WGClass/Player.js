@@ -9,9 +9,9 @@ export default class Player extends BaseWgClass{
         return await response.json();
     }
 
-    static async getPlayerData(server, account_id){
+    static async getPlayerData(server, account_id, access_token = ''){
         let response = await fetch(
-        this.getBasicUrl(server, 'account', 'info', '', account_id), 
+        this.getBasicUrl(server, 'account', 'info', '', account_id, access_token), 
         {
             method: 'GET'
         })

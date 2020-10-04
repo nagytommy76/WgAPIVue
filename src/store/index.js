@@ -1,13 +1,12 @@
 import { createStore } from 'vuex'
+import accessToken from './modules/accessToken'
+import createPersistedState from 'vuex-persistedstate'
 
 export default createStore({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
+  plugins: [
+    createPersistedState(),
+  ],
   modules: {
-    
+    accessToken,
   }
 })
