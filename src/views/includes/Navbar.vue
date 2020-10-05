@@ -17,7 +17,6 @@
     </nav>
 </template>
 <script>
-// import localSt from '../../helpers/localST'
 export default {
     name: 'Navbar',
     computed: {
@@ -30,7 +29,7 @@ export default {
     },
     methods: {
         logOut(){
-            // localSt.removeTokenLocalStroage('vuex')
+            this.$store.dispatch('setToken', {})
             this.$store.dispatch('setUserLoggedIn', false)
             this.$router.push({ path: '/' })
         }

@@ -40,7 +40,7 @@ export default {
                     status: url.status
                 }
                 this.$store.dispatch('setToken', data)
-                // this.$store.dispatch('setUserLoggedIn', true)
+                this.$store.dispatch('setUserLoggedIn', true)
                 this.$router.push({ path: '/' })
             }
         }

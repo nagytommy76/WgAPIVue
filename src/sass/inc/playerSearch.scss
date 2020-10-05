@@ -9,5 +9,14 @@
     .playerData{
         margin: 1rem;
         flex: 2;
+        .statics{
+            .personal-info{
+                h1{
+                    text-align: center;
+                    margin-bottom: .5rem;
+                    font-size: 2rem;
+                }
+            }
+        }
     }
 }

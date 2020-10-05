@@ -4,7 +4,9 @@ import createPersistedState from 'vuex-persistedstate'
 
 export default createStore({
   plugins: [
-    createPersistedState(),
+    createPersistedState({
+      key: 'token',
+    }),
   ],
   modules: {
     accessToken,

@@ -2,27 +2,20 @@
   <main id="app">
     <Navbar />
       <router-view/>  
+    <Footer />
   </main>
 </template>
 <script>
 import Navbar from './views/includes/Navbar'
+import Footer from './views/includes/Footer'
 export default {
   components:{
     Navbar,
+    Footer,
   },
   mounted(){
-    // this.loadUserFromLST();
   },
   methods: {
-    loadUserFromLST(){
-      if (!(Date.now() < this.$store.getters.getExpiresAt)) {
-        // If expires_at larger than date.now
-        this.$store.dispatch('getAndSetToken')
-      }else{
-        // Expired
-
-      }
-    }
   }
 }
 </script>
