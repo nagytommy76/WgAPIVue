@@ -16,6 +16,8 @@
 </template>
 <script>
 import Auth from '../../WGClass/Auth'
+import { mapActions } from 'vuex'
+
 export default {
     name: 'Login',
     computed:{
@@ -29,6 +31,10 @@ export default {
         this.UserLogIn();
     },
     methods: {
+        ...mapActions({
+            setToken: 'setToken',
+            setUserLoggedIn: 'setUserLoggedIn',
+        }),
         UserLogIn(){
             const url = this.$router.currentRoute.value.query;
             if(Object.keys(url).length !== 0 && url.constructor == Object){
@@ -39,8 +45,8 @@ export default {
                     nickname: url.nickname,
                     status: url.status
                 }
-                this.$store.dispatch('setToken', data)
-                this.$store.dispatch('setUserLoggedIn', true)
+                this.setToken(data)
+                this.setUserLoggedIn(true)
                 this.$router.push({ path: '/' })
             }
         }

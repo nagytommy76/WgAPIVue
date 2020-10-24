@@ -1,11 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap');
 @import 'inc/_variables';
+@import 'inc/_utility';
 @import 'inc/navbar';
 @import 'inc/footer';
 @import 'inc/button';
 @import 'inc/card';
 @import 'inc/playerSearch';
-@import 'inc/_utility';
+@import 'inc/vehicleSearch';
 
 
 *{
@@ -16,4 +17,10 @@
 html{
     font-family: 'Nunito', sans-serif;
     scroll-behavior: smooth;
+}
+
+.container{
+    height: $container-height;
+    width: 80%;
+    margin: auto;
 }

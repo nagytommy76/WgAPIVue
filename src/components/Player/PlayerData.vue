@@ -1,22 +1,43 @@
 <template>
     <div class="statics">
+        <h1>Personal Informations</h1>
         <div class="personal-info">
-            <h1>Personal Informations</h1>
-            <h2 class="nickname">Player's Nickname: {{account.nickname}}</h2>
-            <h2>Last battle: {{this.timestampConvert(account.last_battle_time)}}</h2>
-            <h2>Account created: {{this.timestampConvert(account.created_at)}}</h2>
+            <h3 class="nickname">Player's Nickname: {{account.nickname}}</h3>
+            <h3>Last battle: {{this.timestampConvert(account.last_battle_time)}}</h3>
+            <h3>Account created: {{this.timestampConvert(account.created_at)}}</h3>
         </div>
-        <div class="battle-statics">
-            <p>Battles: {{account.statistics.all.battles}}</p>
-            <p>Vehicles destroyed: {{account.statistics.all.frags}}</p>
-            <p>Max XP: {{account.statistics.all.max_xp}}</p>
-            <p>Max damage: {{account.statistics.all.max_damage}}</p> 
-            <p>Win ratio: {{((account.statistics.all.wins / account.statistics.all.battles *100).toFixed(2))}} %</p>
-            <p>Frags: {{account.statistics.all.frags}}</p>
-            <!-- <p>Win ration: {{winRatio(account.statistics.all.wins, account.statistics.all.battles)}} %</p> -->
+        <div class="battle_statics">
+            <div class="stat_item">
+                <span class="stat_value">{{account.statistics.all.battles}}</span>
+                <span class="stat_text">Battles</span>
+            </div>
+
+            <div class="stat_item">
+                <span class="stat_value">{{account.statistics.all.frags}}</span>
+                <span class="stat_text">Vehicles destroyed</span> 
+            </div>
+
+            <div class="stat_item">
+                <span class="stat_value">{{account.statistics.all.max_xp}}</span>
+                <span class="stat_text">Max XP</span>
+            </div>
+
+            <div class="stat_item">
+                <span class="stat_value">{{account.statistics.all.max_damage}}</span>
+                <span class="stat_text">Max damage</span>
+            </div> 
+            <div class="stat_item">
+                <span class="stat_value">{{((account.statistics.all.wins / account.statistics.all.battles *100).toFixed(2))}} %</span>
+                <span class="stat_text">Win ratio</span>
+            </div>
+            <div class="stat_item">
+                <span class="stat_value">{{account.statistics.all.frags}}</span>
+                <span class="stat_text">Frags</span>
+            </div>
         </div>
-        <div v-show="account.private != null">
+        <div v-if="showPrivateData">
             <PrivateData 
+                v-if="userLoggedIn"
                 :privateData="account.private"
                 :timestampConvert="timestampConvert"
             />
@@ -26,6 +47,7 @@
 <script>
 import timestampConvert from '../../helpers/convertTimestamp'
 import PrivateData from './PrivateData'
+import {mapGetters} from 'vuex';
 export default {
     name: "PlayerData",
     components:{
@@ -38,6 +60,13 @@ export default {
         timestampConvert,
     },
     computed:{
+        ...mapGetters({
+            userLoggedIn: 'getUserLoggedIn',
+            accountId: 'getAccountId',
+        }),
+        showPrivateData(){
+            return this.userLoggedIn && this.account.account_id == this.accountId ? true : false
+        }
     }
 }
 </script>

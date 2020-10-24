@@ -2,11 +2,35 @@
     <div class="private-info">
         <h1>Private informations</h1>
         <h3>Premium expires at: {{timestampConvert(privateData.premium_expires_at)}}</h3>
-        <p>Credits: {{ privateData.credits }}</p>
-        <p>Free experience: {{ privateData.free_xp }}</p>
-        <p>Bonds: {{ privateData.bonds }}</p>
-        <p>Gold: {{ privateData.gold }}</p>
-        <p v-show="privateData.restrictions != null">Chat ban time until: {{timestampConvert(privateData.restrictions.chat_ban_time)}}</p>
+        <div class="battle_statics">
+            <div class="stat_item">
+                <span class="stat_value">{{ privateData.credits }}</span>
+                <span class="stat_text">Credits</span>
+            </div>
+
+            <div class="stat_item">
+                <span class="stat_value">{{ privateData.free_xp }}</span>
+                <span class="stat_text">Free experience</span> 
+            </div>
+
+            <div class="stat_item">
+                <span class="stat_value">{{ privateData.bonds }}</span>
+                <span class="stat_text">Bonds</span>
+            </div>
+
+            <div class="stat_item">
+                <span class="stat_value">{{ privateData.gold }}</span>
+                <span class="stat_text">Gold</span>
+            </div> 
+            <div class="stat_item">
+                <span class="stat_value">{{ timestampConvert(privateData.premium_expires_at) }}</span>
+                <span class="stat_text">Gold</span>
+            </div> 
+            <div v-show="privateData.restrictions == null" class="stat_item">
+                <span class="stat_value">{{timestampConvert(privateData.restrictions.chat_ban_time)}}</span>
+                <span class="stat_text">Chat ban time until</span>
+            </div>
+        </div>
     </div>
 </template>
 <script>

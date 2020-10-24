@@ -1,5 +1,5 @@
 <template>
-<div class="player">
+<div class="player container">
   <section class="playerSearch">
     <div class="card card-dark">
       <h1 class="card-title">Searching players</h1>
@@ -10,8 +10,8 @@
           <input @keyup="searchAccountId" class="form-control" type="text" name="player" id="player">
         </div>
         <div class="form-group" v-show="isFound">
-          <label for="nicnname">Nicknames: </label>
-          <select class="form-control" name="nicname" id="nicname" @change="searchPlayerDetails">
+          <label for="nickname">Nicknames: </label>
+          <select class="form-control" name="nickname" id="nickname" @change="searchPlayerDetails">
             <option 
               v-bind:value="nick.account_id"
               v-for="(nick, index) in foundPlayers" :key="index">

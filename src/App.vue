@@ -13,10 +13,6 @@ export default {
     Navbar,
     Footer,
   },
-  mounted(){
-  },
-  methods: {
-  }
 }
 </script>
 <style lang="scss">
