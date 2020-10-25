@@ -1,0 +1,56 @@
+$row-height: 3rem;
+$col-width: 7rem;
+.table-view{
+    max-width: 100%;
+    &-header{
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 3rem;
+        &-row{
+            height: 100%;
+            width: $col-width;
+            text-align: center;
+        }
+    }
+
+    &-body{     
+        &-row{
+            transition: ease-in-out .5s;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 3rem;
+            border-bottom: 1px solid #333;
+
+            &-col{                
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                height: 100%;
+                width: $col-width;
+                
+                .vehicle-name{
+                    max-width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+
+            &:hover{
+                background: #333;
+                color: #FFF;
+            }
+        }
+    }
+}
+.flex-centered{
+    justify-content: center;
+}
+.full-size{
+    width: 13rem;
+}
+
+.modal-open{
+    cursor: pointer;
+}

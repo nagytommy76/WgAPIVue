@@ -7,6 +7,8 @@
 @import 'inc/card';
 @import 'inc/playerSearch';
 @import 'inc/vehicleSearch';
+@import 'inc/table';
+@import 'inc/modal';
 
 
 *{
@@ -20,7 +22,12 @@ html{
 }
 
 .container{
-    height: $container-height;
-    width: 80%;
+    min-height: $container-height;
+    width: 90%;
     margin: auto;
+}
+
+.main-title{
+    text-align: center;
+    font-size: 2.6rem;
 }

@@ -2,7 +2,7 @@ import BaseWgClass from './BaseWgClass';
 
 export default class Player extends BaseWgClass{ 
     static async getPlayerId(server, playerNick){
-        let url = this.getBasicUrl(server, 'account', 'list', playerNick)
+        let url = this.getPlayerUrl(server, 'account', 'list', playerNick)
         let response = await fetch(url, {
             method: 'GET'
         })
@@ -11,7 +11,7 @@ export default class Player extends BaseWgClass{
 
     static async getPlayerData(server, account_id, access_token = ''){
         let response = await fetch(
-        this.getBasicUrl(server, 'account', 'info', '', account_id, access_token), 
+        this.getPlayerUrl(server, 'account', 'info', '', account_id, access_token), 
         {
             method: 'GET'
         })

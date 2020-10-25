@@ -1,6 +1,6 @@
 <template>
     <div class="statics">
-        <h1>Personal Informations</h1>
+        <h1 class="main-title">Personal Informations</h1>
         <div class="personal-info">
             <h3 class="nickname">Player's Nickname: {{account.nickname}}</h3>
             <h3>Last battle: {{this.timestampConvert(account.last_battle_time)}}</h3>

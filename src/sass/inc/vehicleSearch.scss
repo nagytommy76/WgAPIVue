@@ -1,7 +1,13 @@
 .vehicle{
     display: flex;
+    height: 100%;
     .vehicleSearch{
         margin: 1rem;
         flex: .6;
+    }
+
+    .vehicle-data{
+        margin: 1rem;
+        flex: 2;
     }
 }

@@ -5,31 +5,68 @@
             <h1 class="card-title">Searching Vehicles</h1>
             <div class="card-form">
                 <div class="form-group">
-                    <label for="tank_name">Vehicle Name</label>
-                    <input class="form-control" type="text" name="tank_name" id="tank_name">
-                    <label for="tier">Vehicle Tier</label>
-                    <input class="form-control" type="number" name="tier" id="tier" min="1" max="10">
+                    <label for="tank_nation">
+                        Vehicle Nation </label>
+                        <select @change="getVehicles" v-model="selectedNation" class="form-control" name="tank_nation" id="tank_nation">
+                            <option value="">None</option>
+                            <option value="ussr">USSR</option>
+                            <option value="usa">USA</option>
+                            <option value="germany">Germany</option>
+                            <option value="uk">UK</option>
+                            <option value="france">France</option>
+                            <option value="japan">Japan</option>
+                            <option value="italy">Italy</option>
+                            <option value="sweden">Sweden</option>
+                            <option value="poland">Poland</option>
+                            <option value="czech">Czechoslovakia</option>
+                            <option value="china">China</option>
+                        </select>
+                    <label for="tank_name">Vehicle Type</label>
+                    <select @change="getVehicles" class="form-control" v-model="selectedType" name="tank_type" id="tank_type">
+                        <option value="">None</option>
+                        <option value="heavyTank">Heavy Tank</option>
+                        <option value="mediumTank">Medium Tank</option>
+                        <option value="lightTank">Light Tank</option>
+                        <option value="AT-SPG">Tank Destroyer</option>
+                        <option value="SPG">Artilery (SPG)</option>
+                    </select>
+
+                    <label for="tier">Vehicle Tier (1-10)</label>
+                    <input @change="getVehicles" v-model="selectedTier" class="form-control" type="number" name="tier" id="tier" min="1" max="10">
                 </div>
             </div>
             </div>
         </section>
+        <VehicleData :vehicles="vehicles" />
     </div>
 </template>
 <script>
 import Vehicle from '../WGClass/Vehicle'
+
+import VehicleData from '../components/Vehicle/VehicleData'
 export default {
     data() {
         return {
             server: 'eu',
+            selectedNation: '',
+            selectedType: '',
+            selectedTier: 0,
             vehicles: {},
         }
     },
+    components:{
+        VehicleData,
+    },
     mounted(){
-        this.test()
+        // this.getVehicles()
     },
     methods:{
-        test(){
-            Vehicle.getAllVehicles().then(result => console.log(result))
+        async getVehicles(){
+            await Vehicle.getAllVehicles(this.server, this.selectedNation, this.selectedTier, this.selectedType)
+            .then(result => {
+                this.vehicles = result.data
+                console.log(this.vehicles)
+            })
         }
     }
 }
