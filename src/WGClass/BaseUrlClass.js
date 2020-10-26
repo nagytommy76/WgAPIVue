@@ -1,4 +1,4 @@
-export default class BaseWgClass{
+export default class BaseUrlClass{
     static getAppId(){
         return '1ebc47797ed02032c3c5489cbba60f6c'
     }
@@ -10,7 +10,9 @@ export default class BaseWgClass{
         return `https://api.worldoftanks.${server}/wot/auth/${method}/?application_id=${this.getAppId()}&redirect_uri=http://localhost:8080/login`;
     }
 
-    static getVehicleUrl(server = 'eu', method_name, nation, tier, type){
-        return `https://api.worldoftanks.${server}/wot/encyclopedia/${method_name}/?application_id=${this.getAppId()}&nation=${nation}&tier=${tier}&type=${type}`
+    static getVehicleUrl(server = 'eu', method_name, fields = '', nation = '', tier = '', type = ''){
+        return `https://api.worldoftanks.${server}/wot/encyclopedia/${method_name}/?application_id=${this.getAppId()}&fields=${fields}&nation=${nation}&tier=${tier}&type=${type}`
     }
+
+
 }

@@ -66,8 +66,6 @@ export default {
     },
     methods: {
         test(vehicleID){
-            // console.log(vehicleID)
-            // console.log(this.vehicles.data[vehicleID])
             this.selectedVehicle = this.vehicles.data[vehicleID]
             this.showVehicleModal = true
         },

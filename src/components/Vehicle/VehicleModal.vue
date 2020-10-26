@@ -1,9 +1,12 @@
 <template>
     <div class="modal-background">
         <div class="modal">
-            <span @click="$emit('close')" class="close-modal"><i class="fas fa-times"></i>BEZÁRÁS</span>
             <div class="modal-head">
-                <h1>FEJ</h1>
+                <div @click="$emit('close')" class="close-modal"><i class="fas fa-times"></i></div>
+                <div class="vehicle-head">
+                    <img v-bind:src="vehicle.images.big_icon" class="vehicle-head-image">
+                    <h1 class="vehicle-head-name">{{ vehicle.name }} {{ vehicle.nation }} {{ vehicle.type }}</h1>
+                </div>
             </div>
             <div class="modal-body">
                 <h1>TÖRZS</h1>

@@ -15,14 +15,14 @@
     
 </template>
 <script>
-import Auth from '../../WGClass/Auth'
+import BaseUrlClass from '../../WGClass/BaseUrlClass'
 import { mapActions } from 'vuex'
 
 export default {
     name: 'Login',
     computed:{
         url: () =>{
-            return Auth.getAuthUrl();
+            return BaseUrlClass.getAuthUrl();
         }
     },
     mounted() {

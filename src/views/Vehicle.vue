@@ -65,7 +65,7 @@ export default {
             await Vehicle.getAllVehicles(this.server, this.selectedNation, this.selectedTier, this.selectedType)
             .then(result => {
                 this.vehicles = result.data
-                console.log(this.vehicles)
+                // console.log(this.vehicles)
             })
         }
     }

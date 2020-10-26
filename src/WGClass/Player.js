@@ -1,6 +1,6 @@
-import BaseWgClass from './BaseWgClass';
+import BaseUrlClass from './BaseUrlClass';
 
-export default class Player extends BaseWgClass{ 
+export default class Player extends BaseUrlClass{ 
     static async getPlayerId(server, playerNick){
         let url = this.getPlayerUrl(server, 'account', 'list', playerNick)
         let response = await fetch(url, {
