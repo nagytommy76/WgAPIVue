@@ -13,6 +13,4 @@ export default class BaseUrlClass{
     static getVehicleUrl(server = 'eu', method_name, fields = '', nation = '', tier = '', type = ''){
         return `https://api.worldoftanks.${server}/wot/encyclopedia/${method_name}/?application_id=${this.getAppId()}&fields=${fields}&nation=${nation}&tier=${tier}&type=${type}`
     }
-
-
 }

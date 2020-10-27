@@ -41,7 +41,7 @@
     </div>
 </template>
 <script>
-import Vehicle from '../WGClass/Vehicle'
+import Vehicle from '../WGClass/Tankopedia/Vehicle'
 
 import VehicleData from '../components/Vehicle/VehicleData'
 export default {
