@@ -57,15 +57,11 @@ export default {
     components:{
         VehicleData,
     },
-    mounted(){
-        // this.getVehicles()
-    },
     methods:{
         async getVehicles(){
             await Vehicle.getAllVehicles(this.server, this.selectedNation, this.selectedTier, this.selectedType)
             .then(result => {
                 this.vehicles = result.data
-                // console.log(this.vehicles)
             })
         }
     }

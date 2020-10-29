@@ -8,9 +8,13 @@ export default class Vehicle extends BaseUrlClass{
         return axios.get(url)
     }
 
-    // https://api.worldoftanks.eu/wot/encyclopedia/info/?application_id=1ebc47797ed02032c3c5489cbba60f6c
     static async getTankopediaInformation(server = 'eu', fields = ''){
         const url = this.getVehicleUrl(server, 'info', fields)
         return axios.get(url);
+    }
+
+    static async getVehicleCharacteristics(tank_id){
+        const url = this.getVehicleCharacteristicsUrl('vehicleprofile', tank_id)
+        return axios.get(url)
     }
 }

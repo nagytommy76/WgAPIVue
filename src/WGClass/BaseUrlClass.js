@@ -13,4 +13,8 @@ export default class BaseUrlClass{
     static getVehicleUrl(server = 'eu', method_name, fields = '', nation = '', tier = '', type = ''){
         return `https://api.worldoftanks.${server}/wot/encyclopedia/${method_name}/?application_id=${this.getAppId()}&fields=${fields}&nation=${nation}&tier=${tier}&type=${type}`
     }
+
+    static getVehicleCharacteristicsUrl(method_name, tank_id, engine_id = '', gun_id = '', radio_id = '', suspension_id = '', turret_id = ''){
+        return `https://api.worldoftanks.eu/wot/encyclopedia/${method_name}/?application_id=${this.getAppId()}&tank_id=${tank_id}&engine_id=${engine_id}&gun_id=${gun_id}&radio_id=${radio_id}&suspension_id=${suspension_id}&turret_id=${turret_id}`
+    }
 }
