@@ -10,7 +10,7 @@
             </div>
             <div class="modal-body">
                 <VehicleDetails 
-                    :Characteristics="vehicleCharacteristics"
+                    :tank_id="this.vehicle.tank_id"
                 />
             </div>
             <div class="modal-footer">
@@ -29,26 +29,29 @@ export default {
     },
     props:{
         vehicle: Object,
+        vehicleCharacteristics: Object,
     },
     data() {
         return {
             vehicleType: '',
             vehicleNation: '',
-            vehicleCharacteristics: '',
         }
+    },
+    mounted(){
+        // this.getTankCharacteristics()
     },
     created(){
         this.getTankTypeAndNation()
-        this.getTankCharacteristics()
+        // this.getTankCharacteristics()
     },
     methods:{
-        async getTankCharacteristics(){
-            await Vehicle.getVehicleCharacteristics(this.vehicle.tank_id)
-            .then(characteristics => {
-                this.vehicleCharacteristics = characteristics.data.data[this.vehicle.tank_id]
-                console.log(characteristics)
-            })
-        },
+        // async getTankCharacteristics(){
+        //     await Vehicle.getVehicleCharacteristics(this.vehicle.tank_id)
+        //     .then(characteristics => {
+        //         this.vehicleCharacteristics = characteristics.data.data[this.vehicle.tank_id]
+        //         console.log(characteristics)
+        //     })
+        // },
         async getTankTypeAndNation(){
             await Vehicle.getTankopediaInformation('eu', 'vehicle_nations,vehicle_types')
             .then(result => {

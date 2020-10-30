@@ -43,12 +43,15 @@
             <div class="fade-in" v-if="showVehicleModal" @click="showVehicleModal = false"></div>
         </transition>
         <transition name="modal" appear>
-            <VehicleModal :vehicle="selectedVehicle" @close="showVehicleModal = false" v-if="showVehicleModal" />
+            <VehicleModal 
+            :vehicle="selectedVehicle" @close="showVehicleModal = false" v-if="showVehicleModal" 
+            />
         </transition>
     </section>
 </template>
 <script>
 import VehicleModal from './VehicleModal'
+
 export default {
     props: {
         vehicles: Object,
@@ -61,11 +64,12 @@ export default {
     data() {
         return {
             showVehicleModal : false,
-            selectedVehicle: {}
+            selectedVehicle: {},
+            vehicleCharacteristics: {}
         }
     },
     methods: {
-        test(vehicleID){
+        async test(vehicleID){
             this.selectedVehicle = this.vehicles.data[vehicleID]
             this.showVehicleModal = true
         },

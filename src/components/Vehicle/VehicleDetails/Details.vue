@@ -15,9 +15,9 @@
                 <div class="specification-item">
                     <span class="specification-description">Hull Armor:</span>
                     <span class="specification-result">
-                        {{ Characteristics.armor.hull.front }} /
-                        {{ Characteristics.armor.hull.sides }} /
-                        {{ Characteristics.armor.hull.rear }} mm
+                        {{ Characteristics.armor.hull }} /
+                        {{ Characteristics.armor.hull }} /
+                        {{ Characteristics.armor.hull }} mm
                     </span>
                 </div>
                 <!-- <div class="specification-item">
@@ -34,20 +34,42 @@
 </template>
 <script>
 import SingleDetail from './DetailItems/SingleDetail'
+import Vehicle from '../../../WGClass/Tankopedia/Vehicle'
+
 export default {
     components:{
         SingleDetail,
     },
     props:{
-        Characteristics: Object,
+        // Characteristics: Object,
+        tank_id: String,
     },
     data() {
         return {
-            
+            Char: {}
         }
     },
     computed:{
-
+        Characteristics: {
+            get(){
+                return this.Char;
+            },
+            set(value){
+                this.Char = value;
+            }
+        }
+    },
+    mounted(){
+        // this.getTankCharacteristics()
+    },
+    methods:{
+        async getTankCharacteristics(){
+            await Vehicle.getVehicleCharacteristics(this.tank_id)
+            .then(characteristics => {
+                this.Characteristics = characteristics.data.data[this.tank_id]
+                console.log(characteristics)
+            })
+        },
     },
 }
 </script>
