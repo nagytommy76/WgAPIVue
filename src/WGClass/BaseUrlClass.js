@@ -17,4 +17,8 @@ export default class BaseUrlClass{
     static getVehicleCharacteristicsUrl(method_name, tank_id, engine_id = '', gun_id = '', radio_id = '', suspension_id = '', turret_id = ''){
         return `https://api.worldoftanks.eu/wot/encyclopedia/${method_name}/?application_id=${this.getAppId()}&tank_id=${tank_id}&engine_id=${engine_id}&gun_id=${gun_id}&radio_id=${radio_id}&suspension_id=${suspension_id}&turret_id=${turret_id}`
     }
+    // https://api.worldoftanks.eu/wot/encyclopedia/modules/?application_id=1ebc47797ed02032c3c5489cbba60f6c&module_id=66068
+    static getVehicleModule(module_id = ''){
+        return `https://api.worldoftanks.eu/wot/encyclopedia/modules/?application_id=${this.getAppId()}&module_id=${module_id}`;
+    }
 }

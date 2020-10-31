@@ -11,7 +11,7 @@
                 <div class="table-view-header-row flex-centered">Weight</div>
             </div>
             <div class="table-view-body">
-                <div class="table-view-body-row modal-open" v-for="(vehicle, index) in vehicles.data" :key="index"  @click="test(index)">
+                <div class="table-view-body-row modal-open" v-for="(vehicle, index) in vehicles.data" :key="index"  @click="openVehicleModal(index)">
                     <div class="table-view-body-row-col full-size">
                         <span class="vehicle-contour-icon">
                             <img :src="vehicle.images.contour_icon" />
@@ -65,11 +65,10 @@ export default {
         return {
             showVehicleModal : false,
             selectedVehicle: {},
-            vehicleCharacteristics: {}
         }
     },
     methods: {
-        async test(vehicleID){
+        async openVehicleModal(vehicleID){
             this.selectedVehicle = this.vehicles.data[vehicleID]
             this.showVehicleModal = true
         },

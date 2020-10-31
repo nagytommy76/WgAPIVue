@@ -9,7 +9,10 @@ export default {
     props:{
         descriptionName: String,
         specResult: String,
-        unitName: String
+        unitName: {
+            required: false,
+            type: String
+        }
     },
 }
 </script>

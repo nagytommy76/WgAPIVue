@@ -1,3 +1,4 @@
+$modal-background: rgb(28,28,30);
 .fade-enter-from, .fade-leave-to{
     opacity: 0;
 }
@@ -11,7 +12,6 @@
 }
 
 .modal-enter-from, .modal-leave-to{
-    // opacity: 0;
     transform: translateY(-100%);
 }
 .modal-enter-active, .modal-leave-active{
@@ -19,13 +19,12 @@
 }
 
 .modal-enter-to, .modal-leave-from{
-    // opacity: 1;
     transform: translateY(0);
 }
 
 .close-modal{
     position: absolute;
-    color: black;
+    color: white;
     i{
         transition: all .4s ease;
         cursor: pointer;
@@ -62,11 +61,12 @@
     height: 100vh;
 
     .modal{
-        background: white;
+        background: $modal-background;
+        color: white;
         border-radius: 15px;
-        box-shadow: 1px 1px 20px;
+        box-shadow: 1px 1px 20px black;
         width: 80%;
-        height: 75%;
+        height: 80%;
         display: grid;
         grid-template-rows: 12% 58% 30%;
 
@@ -85,6 +85,53 @@
                 }
             }
             
+        }
+        &-body{
+            display: grid;
+            grid-template-columns: 40% 60%;
+            margin: 0rem 1rem;
+            max-width: 100%;
+            .left{
+                justify-content: start;
+                margin-right: .5rem;
+            }
+            .right{
+                justify-content: end;
+                margin-left: .5rem;
+            }
+        }
+    }
+}
+
+.specification{
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    justify-content: center;
+        align-content: center;
+    &-row{
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+    &-block{
+        min-height: 250px;
+        min-width: 310px;
+        margin: .7rem;
+        .specification-title{
+            text-transform: uppercase;
+            border-bottom: 2px solid rgba($color: #00FF17, $alpha: .4);
+            margin-bottom: .4rem;
+        }
+        .specification-item{
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba($color: #00FF17, $alpha: .2);
+            margin: .2rem 0rem;
+            .specification-description{
+                text-transform: uppercase;
+            }           
         }
     }
 }
