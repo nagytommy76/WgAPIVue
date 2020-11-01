@@ -23,9 +23,9 @@ import SurvivabilityBlock from './SurvivabilityBlock'
 import SpottingBlock from './SpottingBlock'
 import FirepowerBlock from './FirepowerBlock'
 import MobilityBlock from './MobilityBlock'
-// import Vehicle from '../../../WGClass/Tankopedia/Vehicle'
 
 export default {
+    name: 'Vehicle Details',
     components:{
         SurvivabilityBlock,
         SpottingBlock,

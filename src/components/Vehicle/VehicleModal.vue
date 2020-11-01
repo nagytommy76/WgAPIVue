@@ -5,7 +5,12 @@
                 <div @click="$emit('close')" class="close-modal"><i class="fas fa-times"></i></div>
                 <div class="vehicle-head">
                     <img v-bind:src="vehicle.images.big_icon" class="vehicle-head-image">
-                    <h1 class="vehicle-head-name">{{ vehicle.name }} Tier {{ vehicle.tier}} {{ vehicleNation }} {{ vehicleType }}</h1>
+                    <h1 class="vehicle-head-name">
+                        {{ vehicle.name }} |
+                        Tier {{ vehicle.tier}} |
+                        {{ vehicleNation }} |
+                        {{ vehicleType }}                    
+                    </h1>
                 </div>
             </div>
             <div class="modal-body">
@@ -34,6 +39,7 @@ import VehicleDetails from './VehicleDetails/Details'
 import VehicleModules from './VehicleModules/Modules' 
 
 export default {
+    name: 'Vehicle Modal',
     components:{
         VehicleDetails,
         VehicleModules,
@@ -47,11 +53,11 @@ export default {
             vehicleNation: '',
             vehicleCharacteristics: {},
             vehicleModules: {
-                engines:{},
-                guns:{},
-                radios: {},
-                suspensions: {},
-                turrets: {},
+                engines:[],
+                guns:[],
+                radios: [],
+                suspensions: [],
+                turrets: [],
             },
 
             showCharacteristics: false,
@@ -69,7 +75,6 @@ export default {
                 this.vehicleCharacteristics = characteristics.data.data[this.vehicle.tank_id]
                 this.showCharacteristics = true
                 this.getVehicleModules()
-                this.showModules = true
             })
         },
         async getTankTypeAndNation(){
@@ -82,24 +87,29 @@ export default {
         async getVehicleModules(){
             await Vehicle.getVehicleModules(this.makeModuleStringToSend(this.vehicle.engines))
             .then(result => {
-                this.vehicleModules.engines = result.data.data
+                this.fillVehicleModules(this.vehicleModules.engines, result, this.vehicle.default_profile.modules.engine_id)                 
             })
             await Vehicle.getVehicleModules(this.makeModuleStringToSend(this.vehicle.guns))
             .then(result => {
-                this.vehicleModules.guns = result.data.data
+                this.fillVehicleModules(this.vehicleModules.guns, result, this.vehicle.default_profile.modules.gun_id)
+                // this.vehicleModules.guns = result.data.data
             })
             await Vehicle.getVehicleModules(this.makeModuleStringToSend(this.vehicle.radios))
             .then(result => {
-                this.vehicleModules.radios = result.data.data
+                this.fillVehicleModules(this.vehicleModules.radios, result, this.vehicle.default_profile.modules.radio_id)
+                // this.vehicleModules.radios = result.data.data
             })
             await Vehicle.getVehicleModules(this.makeModuleStringToSend(this.vehicle.suspensions))
             .then(result => {
-                this.vehicleModules.suspensions = result.data.data
+                this.fillVehicleModules(this.vehicleModules.suspensions, result, this.vehicle.default_profile.modules.suspension_id)
+                // this.vehicleModules.suspensions = result.data.data
             })
             await Vehicle.getVehicleModules(this.makeModuleStringToSend(this.vehicle.turrets))
             .then(result => {
-                this.vehicleModules.turrets = result.data.data
+                this.fillVehicleModules(this.vehicleModules.turrets, result, this.vehicle.default_profile.modules.turret_id)
+                // this.vehicleModules.turrets = result.data.data
             })
+            this.showModules = true
         },
         makeModuleStringToSend(module_ids = []){
             let resultString = '';
@@ -107,6 +117,23 @@ export default {
                 resultString += modules + ','
             })
             return resultString
+        },
+        fillVehicleModules(moduleTypeArray, resultData, moduleId){
+            let firstDefault = moduleId;
+            moduleTypeArray.push(resultData.data.data[firstDefault])
+            
+            if(this.vehicle.modules_tree[resultData.data.data[firstDefault].module_id].next_modules != null){
+            let nextModuleId = this.vehicle.modules_tree[resultData.data.data[firstDefault].module_id].next_modules[0];
+            while(nextModuleId != null){
+                moduleTypeArray.push(resultData.data.data[nextModuleId])
+                // console.log(this.vehicle.modules_tree[resultData.data.data[nextModuleId]])
+                if (this.vehicle.modules_tree[resultData.data.data[nextModuleId]] != undefined){                        
+                    nextModuleId = this.vehicle.modules_tree[resultData.data.data[nextModuleId].module_id].next_modules[0]
+                }else{
+                    nextModuleId = null
+                }
+            } 
+            }
         }
     },
         

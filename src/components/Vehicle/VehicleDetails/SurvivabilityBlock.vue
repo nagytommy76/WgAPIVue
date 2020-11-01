@@ -14,6 +14,7 @@
                 :unitName="'mm'"
             />
             <MultiDetails 
+                v-if="Characteristics.armor.turret != null"
                 :descriptionName="'Turret Armor'"
                 :firstSpec="Characteristics.armor.turret.front "
                 :secondSpec="Characteristics.armor.turret.sides"

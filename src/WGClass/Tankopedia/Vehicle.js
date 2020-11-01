@@ -13,8 +13,8 @@ export default class Vehicle extends BaseUrlClass{
         return axios.get(url);
     }
 
-    static async getVehicleCharacteristics(tank_id){
-        const url = this.getVehicleCharacteristicsUrl('vehicleprofile', tank_id)
+    static async getVehicleCharacteristics(tank_id, engine_id = ''){
+        const url = this.getVehicleCharacteristicsUrl('vehicleprofile', tank_id, engine_id)
         return axios.get(url)
     }
 
