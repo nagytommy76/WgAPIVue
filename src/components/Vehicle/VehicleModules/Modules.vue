@@ -1,23 +1,45 @@
 <template>
     <div class="modules-table">
         <div class="modules-table-row">
-            <div class="modules-item" v-for="(engine, index) in modules.engines" :key="index">
-                <span class="modules-item-level">
-                    {{engine.tier}}
-                </span>
-                <div class="modules-item-image">
-                    <img v-bind:src="engine.image">
-                </div>
-                <p class="modules-item-description">
-                    {{engine.name}}
-                </p>
-            </div>
+            <ModuleType 
+                v-for="(engine, index) in modules.engines" :key="index"
+                :modules="engine"
+            />
+        </div>
+        <div class="modules-table-row">
+            <ModuleType 
+                v-for="(gun, index) in modules.guns" :key="index"
+                :modules="gun"
+            />
+        </div>
+        <div class="modules-table-row">
+            <ModuleType 
+                v-for="(radio,index) in modules.radios" :key="index"
+                :modules="radio"
+            />
+        </div>
+        <div class="modules-table-row">
+            <ModuleType 
+                v-for="(suspension,index) in modules.suspensions" :key="index"
+                :modules="suspension"
+            />
+        </div>
+        <div class="modules-table-row">
+            <ModuleType 
+                v-for="(turret, index) in modules.turrets" :key="index"
+                :modules="turret"
+            />
         </div>
     </div>
 </template>
 <script>
+import ModuleType from './ModuleTypes/ModuleType'
+
 export default {
     name: 'Modules Tree',
+    components:{
+        ModuleType,
+    },
     data() {
         return {
             selectedEngine: '',
@@ -26,21 +48,5 @@ export default {
     props:{
         modules: Object,
     },
-    mounted(){
-        this.test()
-    },
-    methods:{
-        test(){
-            // for (const [key, modules] of Object.entries(this.modulesTree)) {
-            //     console.log(key)
-            //     console.log(modules.is_default);
-            // }
-        },
-        test2(){
-            
-        },
-    },
-    // Végigmegyek a module tree-n, és azt megjelenítem a modules-al majd...
-    // egy adott elemnél megnézem van-e next modules, ha van akkor arra megyek tovább
 }
 </script>

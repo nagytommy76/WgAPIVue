@@ -1,20 +1,48 @@
 <template>
     <div class="specification-block">
         <h2 class="specification-title">Fire Power</h2>
-        <MultiDetails 
-            :descriptionName="'Damage'"
-            :firstSpec="Characteristics.ammo[0].damage[1] "
-            :secondSpec="Characteristics.ammo[1].damage[1]"
-            :thirdSpec="Characteristics.ammo[2].damage[1]"
-            :unitName="'mm'"
-        />
-        <MultiDetails 
-            :descriptionName="'Armor Penetration'"
-            :firstSpec="Characteristics.ammo[0].penetration[1] "
-            :secondSpec="Characteristics.ammo[1].penetration[1]"
-            :thirdSpec="Characteristics.ammo[2].penetration[1]"
-            :unitName="'mm'"
-        />
+        <span v-if="Characteristics.ammo.length == 1">
+            <MultiDetails 
+                :descriptionName="'Damage'"
+                :firstSpec="Characteristics.ammo[0].damage[1] "
+                :unitName="'mm'"
+            />
+            <MultiDetails 
+                :descriptionName="'Armor Penetration'"
+                :firstSpec="Characteristics.ammo[0].penetration[1] "
+                :unitName="'mm'"
+            />
+        </span>
+        <span v-if="Characteristics.ammo.length == 2">
+            <MultiDetails 
+                :descriptionName="'Damage'"
+                :firstSpec="Characteristics.ammo[0].damage[1] "
+                :secondSpec="Characteristics.ammo[1].damage[1]"
+                :unitName="'mm'"
+            />
+            <MultiDetails 
+                :descriptionName="'Armor Penetration'"
+                :firstSpec="Characteristics.ammo[0].penetration[1] "
+                :secondSpec="Characteristics.ammo[1].penetration[1]"
+                :unitName="'mm'"
+            />
+        </span>
+        <span  v-if="Characteristics.ammo.length == 3">
+            <MultiDetails 
+                :descriptionName="'Damage'"
+                :firstSpec="Characteristics.ammo[0].damage[1] "
+                :secondSpec="Characteristics.ammo[1].damage[1]"
+                :thirdSpec="Characteristics.ammo[2].damage[1]"
+                :unitName="'mm'"
+            />
+            <MultiDetails 
+                :descriptionName="'Armor Penetration'"
+                :firstSpec="Characteristics.ammo[0].penetration[1] "
+                :secondSpec="Characteristics.ammo[1].penetration[1]"
+                :thirdSpec="Characteristics.ammo[2].penetration[1]"
+                :unitName="'mm'"
+            />
+        </span>
         <SingleDetail 
             :descriptionName="'Damage Per Minute'"
             :specResult="dmgPerMinute"

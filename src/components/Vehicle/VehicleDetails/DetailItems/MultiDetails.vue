@@ -13,7 +13,10 @@ export default {
     props:{
         descriptionName: String,
         firstSpec: String,
-        secondSpec: String,
+        secondSpec: {
+            required: false,
+            type: String
+        },
         thirdSpec:{
             required: false,
             type: String,
