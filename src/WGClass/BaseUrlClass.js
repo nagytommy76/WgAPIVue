@@ -14,8 +14,11 @@ export default class BaseUrlClass{
         return `https://api.worldoftanks.${server}/wot/encyclopedia/${method_name}/?application_id=${this.getAppId()}&fields=${fields}&nation=${nation}&tier=${tier}&type=${type}`
     }
 
-    static getVehicleCharacteristicsUrl(method_name, tank_id, engine_id = '', gun_id = '', radio_id = '', suspension_id = '', turret_id = ''){
-        return `https://api.worldoftanks.eu/wot/encyclopedia/${method_name}/?application_id=${this.getAppId()}&tank_id=${tank_id}&engine_id=${engine_id}&gun_id=${gun_id}&radio_id=${radio_id}&suspension_id=${suspension_id}&turret_id=${turret_id}`
+    // static getVehicleCharacteristicsUrl(method_name, tank_id, engine_id = '', gun_id = '', radio_id = '', suspension_id = '', turret_id = ''){
+    //     return `https://api.worldoftanks.eu/wot/encyclopedia/${method_name}/?application_id=${this.getAppId()}&tank_id=${tank_id}&engine_id=${engine_id}&gun_id=${gun_id}&radio_id=${radio_id}&suspension_id=${suspension_id}&turret_id=${turret_id}`
+    // }
+    static getVehicleCharacteristicsUrl(method_name, tank_id, selectedVehicleModulesId){
+        return `https://api.worldoftanks.eu/wot/encyclopedia/${method_name}/?application_id=${this.getAppId()}&tank_id=${tank_id}&engine_id=${selectedVehicleModulesId.engine_id}&gun_id=${selectedVehicleModulesId.gun_id}&radio_id=${selectedVehicleModulesId.radio_id}&suspension_id=${selectedVehicleModulesId.suspension_id}&turret_id=${selectedVehicleModulesId.turret_id}`
     }
     // https://api.worldoftanks.eu/wot/encyclopedia/modules/?application_id=1ebc47797ed02032c3c5489cbba60f6c&module_id=66068
     static getVehicleModule(module_id = ''){

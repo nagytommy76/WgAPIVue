@@ -59,7 +59,14 @@ export default {
                 suspensions: [],
                 turrets: [],
             },
-
+            selectedVehicleModulesId: {
+                engine_id: this.vehicle.default_profile.modules.engine_id,
+                gun_id: this.vehicle.default_profile.modules.gun_id,
+                radio_id: this.vehicle.default_profile.modules.radio_id,
+                suspension_id: this.vehicle.default_profile.modules.suspension_id,
+                // Megoldva: ha pl nincs turret akkor null lesz a turret_id és így nem tudja lekérni a vehicle characteristics-et
+                turret_id: this.vehicle.default_profile.modules.turret_id == null ? '' : this.vehicle.default_profile.modules.turret_id
+            },
             showCharacteristics: false,
             showModules: false,
         }
@@ -67,14 +74,20 @@ export default {
     created(){
         this.getTankTypeAndNation()
         this.getTankCharacteristics()
+        this.getVehicleModules()
     },
     methods:{
         async getTankCharacteristics(){
-            await Vehicle.getVehicleCharacteristics(this.vehicle.tank_id)
+            await Vehicle.getVehicleCharacteristics(this.vehicle.tank_id, this.selectedVehicleModulesId)
             .then(characteristics => {
-                this.vehicleCharacteristics = characteristics.data.data[this.vehicle.tank_id]
-                this.showCharacteristics = true
-                this.getVehicleModules()
+                // Hiba, ha nem a következő kompatibilis modul lesz kiválsztva a server 404 "invalid module ids" errort dob
+                if(characteristics.status != 'error'){
+                    console.log(this.selectedVehicleModulesId)
+                    console.log(this.vehicle.tank_id)
+                    console.log(characteristics.data.data)
+                    this.vehicleCharacteristics = characteristics.data.data[this.vehicle.tank_id]
+                    this.showCharacteristics = true
+                }
             })
         },
         async getTankTypeAndNation(){
@@ -85,56 +98,16 @@ export default {
             })
         },
         async getVehicleModules(){
-            let allVehicleModuleId = this.makeModuleStringToSend(this.vehicle.modules_tree);
-            // await Vehicle.getVehicleModules(allVehicleModuleId)
-            // .then(result => {
-            //     this.fillVehicleModules()
-            // })
-
-            // await Vehicle.getVehicleModules(this.makeModuleStringToSend(this.vehicle.engines))
-            // .then(result => {
-            //     this.fillVehicleModules(this.vehicleModules.engines, result.data.data, this.vehicle.default_profile.modules.engine_id)                 
-            // })
-            // await Vehicle.getVehicleModules(this.makeModuleStringToSend(this.vehicle.guns))
-            // .then(result => {
-            //     this.fillVehicleModules(this.vehicleModules.guns, result.data.data, this.vehicle.default_profile.modules.gun_id)
-            // })
-            // await Vehicle.getVehicleModules(this.makeModuleStringToSend(this.vehicle.radios))
-            // .then(result => {
-            //     this.fillVehicleModules(this.vehicleModules.radios, result.data.data, this.vehicle.default_profile.modules.radio_id)
-            // })
-            // await Vehicle.getVehicleModules(this.makeModuleStringToSend(this.vehicle.suspensions))
-            // .then(result => {
-            //     this.fillVehicleModules(this.vehicleModules.suspensions, result.data.data, this.vehicle.default_profile.modules.suspension_id)
-            // })
-            // if(this.vehicle.turrets.length > 0){            
-            //     await Vehicle.getVehicleModules(this.makeModuleStringToSend(this.vehicle.turrets))
-            //     .then(result => {
-            //         this.fillVehicleModules(this.vehicleModules.turrets, result.data.data, this.vehicle.default_profile.modules.turret_id)
-            //     })
-            // }
-            await Vehicle.getVehicleModules(allVehicleModuleId)
+            await Vehicle.getVehicleModules(this.makeModuleStringToSend(this.vehicle.modules_tree))
             .then(result => {
-                this.fillVehicleModules(this.vehicleModules.engines, result.data.data, this.vehicle.default_profile.modules.engine_id)                 
-            })
-            await Vehicle.getVehicleModules(allVehicleModuleId)
-            .then(result => {
-                this.fillVehicleModules(this.vehicleModules.guns, result.data.data, this.vehicle.default_profile.modules.gun_id)
-            })
-            await Vehicle.getVehicleModules(allVehicleModuleId)
-            .then(result => {
+                this.fillVehicleModules(this.vehicleModules.engines, result.data.data, this.vehicle.default_profile.modules.engine_id)
+                this.fillVehicleModules(this.vehicleModules.guns, result.data.data, this.vehicle.default_profile.modules.gun_id) 
                 this.fillVehicleModules(this.vehicleModules.radios, result.data.data, this.vehicle.default_profile.modules.radio_id)
-            })
-            await Vehicle.getVehicleModules(allVehicleModuleId)
-            .then(result => {
                 this.fillVehicleModules(this.vehicleModules.suspensions, result.data.data, this.vehicle.default_profile.modules.suspension_id)
-            })
-            if(this.vehicle.turrets.length > 0){            
-                await Vehicle.getVehicleModules(allVehicleModuleId)
-                .then(result => {
+                if(this.vehicle.turrets.length > 0){ 
                     this.fillVehicleModules(this.vehicleModules.turrets, result.data.data, this.vehicle.default_profile.modules.turret_id)
-                })
-            }
+                }
+            })
             this.showModules = true
         },
         makeModuleStringToSend(module_ids = {}){
@@ -144,13 +117,6 @@ export default {
             }
             return resultString
         },
-        // makeModuleStringToSend(module_ids = []){
-        //     let resultString = '';
-        //     module_ids.map((modules) =>{
-        //         resultString += modules + ','
-        //     })
-        //     return resultString
-        // },
         fillVehicleModules(moduleTypeArray, resultData, defaultModuleId){
             // push-olom az első modult a vehicleModules.module-ba.
             moduleTypeArray.push(resultData[defaultModuleId])
