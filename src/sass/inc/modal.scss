@@ -176,3 +176,25 @@ $modal-background: rgb(28,28,30);
         }
     }
 }
+
+.modal-footer{
+    h1{
+        text-align: center;
+    }
+    .tech-tree-row{
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        .tech-tree-item{
+            margin: auto;
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all .4s;
+            &:hover{
+                background: gray;
+            }
+        }
+    }
+}

@@ -78,10 +78,6 @@ export default {
     },
     props:{
         modules: Object,
-        // selectedVehicleModulesId:{
-        //     required: false,
-        //     type: Object,
-        // }
     },
 }
 </script>

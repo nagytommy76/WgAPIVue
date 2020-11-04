@@ -28,7 +28,38 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <h1>POTROH</h1>
+                <h1>Next and previous tanks</h1>
+                <div class="tech-tree-row">
+                    <!-- <div class="tech-tree-vehicle"> -->
+                        <div class="tech-tree-item">
+                            <div class="tech-tree-item-head">
+                                <img src="http://api.worldoftanks.eu/static/2.66.0/wot/encyclopedia/vehicle/uk-GB21_Cromwell.png">
+                            </div>
+                            <div class="tech-tree-item-footer">
+                                <p>Cromwell</p>
+                                <p>Credits: 65000 experience: 15000</p>
+                            </div>
+                        </div> <!-- -->
+                        <div class="tech-tree-item">
+                            <div class="tech-tree-item-head">
+                                <img src="http://api.worldoftanks.eu/static/2.66.0/wot/encyclopedia/vehicle/uk-GB21_Cromwell.png">
+                            </div>
+                            <div class="tech-tree-item-footer">
+                                <p>Cromwell</p>
+                                <p>Credits: 65000 experience: 15000</p>
+                            </div>
+                        </div> <!-- -->
+                        <div class="tech-tree-item">
+                            <div class="tech-tree-item-head">
+                                <img src="http://api.worldoftanks.eu/static/2.66.0/wot/encyclopedia/vehicle/uk-GB21_Cromwell.png">
+                            </div>
+                            <div class="tech-tree-item-footer">
+                                <p>Cromwell</p>
+                                <p>Credits: 65000 experience: 15000</p>
+                            </div>
+                        </div> <!-- -->
+                    <!-- </div> -->
+                </div>
             </div>
         </div>
     </div>
@@ -80,13 +111,14 @@ export default {
         async getTankCharacteristics(){
             await Vehicle.getVehicleCharacteristics(this.vehicle.tank_id, this.selectedVehicleModulesId)
             .then(characteristics => {
+                console.log(characteristics)
                 // Hiba, ha nem a következő kompatibilis modul lesz kiválsztva a server 404 "invalid module ids" errort dob
-                if(characteristics.status != 'error'){
-                    console.log(this.selectedVehicleModulesId)
-                    console.log(this.vehicle.tank_id)
-                    console.log(characteristics.data.data)
+                if(characteristics.data.status != 'error'){
                     this.vehicleCharacteristics = characteristics.data.data[this.vehicle.tank_id]
                     this.showCharacteristics = true
+                }else{
+                    // ide akkor lépünk be ha error van és a megelőző modult kell kiválasztani
+                    
                 }
             })
         },
