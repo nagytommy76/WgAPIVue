@@ -2,9 +2,9 @@ import BaseUrlClass from '../BaseUrlClass';
 import axios from 'axios'
 
 export default class Vehicle extends BaseUrlClass{
-    static async getAllVehicles(server = 'eu', nation, incomingTier, type, displayFields = ''){
+    static async getAllVehicles(server = 'eu', nation, incomingTier, type, displayFields = '', tank_id = ''){
         const tier = incomingTier === 0 ? '' : incomingTier
-        const url = this.getVehicleUrl(server, 'vehicles', displayFields, nation, tier, type);
+        const url = this.getVehicleUrl(server, 'vehicles', displayFields, nation, tier, type, tank_id);
         return axios.get(url)
     }
 

@@ -33,29 +33,32 @@
                     <!-- <div class="tech-tree-vehicle"> -->
                         <div class="tech-tree-item">
                             <div class="tech-tree-item-head">
-                                <img src="http://api.worldoftanks.eu/static/2.66.0/wot/encyclopedia/vehicle/uk-GB21_Cromwell.png">
+                                <h3>{{ previousVehicleData.tank_name }}</h3>
+                                <img v-bind:src="previousVehicleData.big_icon">
                             </div>
                             <div class="tech-tree-item-footer">
-                                <p>Cromwell</p>
-                                <p>Credits: 65000 experience: 15000</p>
+                                <p>Credits: {{ previousVehicleData.price_credits }}</p>
+                                <p>Research: {{ previousVehicleData.research_experience }}</p>
                             </div>
                         </div> <!-- -->
                         <div class="tech-tree-item">
                             <div class="tech-tree-item-head">
-                                <img src="http://api.worldoftanks.eu/static/2.66.0/wot/encyclopedia/vehicle/uk-GB21_Cromwell.png">
+                                <h3>{{ vehicle.name }}</h3>
+                                <img v-bind:src="vehicle.images.big_icon">
                             </div>
                             <div class="tech-tree-item-footer">
-                                <p>Cromwell</p>
-                                <p>Credits: 65000 experience: 15000</p>
+                                <p>Credits: {{ vehicle.price_credit }}</p>
+                                <p>experience: {{ Object.values(vehicle.prices_xp)[0] }}</p>
                             </div>
                         </div> <!-- -->
                         <div class="tech-tree-item">
                             <div class="tech-tree-item-head">
-                                <img src="http://api.worldoftanks.eu/static/2.66.0/wot/encyclopedia/vehicle/uk-GB21_Cromwell.png">
+                                <h3>{{ nextVehicleData.tank_name }}</h3>
+                                <img v-bind:src="nextVehicleData.big_icon">
                             </div>
                             <div class="tech-tree-item-footer">
-                                <p>Cromwell</p>
-                                <p>Credits: 65000 experience: 15000</p>
+                                <p>Credits: {{ nextVehicleData.price_credits }}</p>
+                                <p>Research: {{ nextVehicleData.research_experience }}</p>
                             </div>
                         </div> <!-- -->
                     <!-- </div> -->
@@ -80,6 +83,20 @@ export default {
     },
     data() {
         return {
+            nextVehicleData: {
+                tank_id: '',
+                tank_name: '',
+                research_experience: 0,
+                big_icon: '',
+                price_credits: 0,
+            },
+            previousVehicleData: {
+                tank_id: '',
+                tank_name: '',
+                research_experience: 0,
+                big_icon: '',
+                price_credits: 0,
+            },
             vehicleType: '',
             vehicleNation: '',
             vehicleCharacteristics: {},
@@ -106,19 +123,19 @@ export default {
         this.getTankTypeAndNation()
         this.getTankCharacteristics()
         this.getVehicleModules()
+        this.getNextVehicle()
     },
     methods:{
         async getTankCharacteristics(){
             await Vehicle.getVehicleCharacteristics(this.vehicle.tank_id, this.selectedVehicleModulesId)
             .then(characteristics => {
-                console.log(characteristics)
+                // console.log(characteristics)
                 // Hiba, ha nem a következő kompatibilis modul lesz kiválsztva a server 404 "invalid module ids" errort dob
                 if(characteristics.data.status != 'error'){
                     this.vehicleCharacteristics = characteristics.data.data[this.vehicle.tank_id]
                     this.showCharacteristics = true
                 }else{
                     // ide akkor lépünk be ha error van és a megelőző modult kell kiválasztani
-                    
                 }
             })
         },
@@ -141,6 +158,40 @@ export default {
                 }
             })
             this.showModules = true
+        },
+        // A következő tank a next tanks, ennek a kulcsa a kövi tank id, a value pedig az XP
+        // Az előző tank id-je a prices_xp key-je, az xp pedig a value
+        async getNextVehicle(){
+            let nextTankId = ''
+            let nextTankResearchXp = 0
+            // Refaktorálás szükséges!!!!!!!!!!!!!!!
+            // Ugyan ezt megoldani, csak a Tier 1-es tankoknál, ott nincs previous tank!!!!!!!!!!!!!!
+            if(this.vehicle.next_tanks != null){
+                nextTankId = Object.keys(this.vehicle.next_tanks)[0]
+                nextTankResearchXp = Object.values(this.vehicle.next_tanks)[0]
+            }
+
+            let previousTankId = Object.keys(this.vehicle.prices_xp)[0]
+            // 
+            await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${nextTankId},${previousTankId}`)
+            .then(result => {
+                // console.log(result.data)
+                if(this.vehicle.next_tanks != null){
+                this.nextVehicleData.tank_id = nextTankId
+                this.nextVehicleData.tank_name = result.data.data[nextTankId].name
+                this.nextVehicleData.big_icon = result.data.data[nextTankId].images.big_icon
+                this.nextVehicleData.price_credits = result.data.data[nextTankId].price_credit
+                this.nextVehicleData.research_experience = nextTankResearchXp
+                }
+
+                let previousTankResearchXp = Object.values(result.data.data[previousTankId].prices_xp)[0]
+
+                this.previousVehicleData.tank_id = previousTankId
+                this.previousVehicleData.tank_name = result.data.data[previousTankId].name
+                this.previousVehicleData.big_icon = result.data.data[previousTankId].images.big_icon
+                this.previousVehicleData.price_credits = result.data.data[previousTankId].price_credit
+                this.previousVehicleData.research_experience = previousTankResearchXp
+            })
         },
         makeModuleStringToSend(module_ids = {}){
             let resultString = '';

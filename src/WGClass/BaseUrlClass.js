@@ -10,8 +10,8 @@ export default class BaseUrlClass{
         return `https://api.worldoftanks.${server}/wot/auth/${method}/?application_id=${this.getAppId()}&redirect_uri=http://localhost:8080/login`;
     }
 
-    static getVehicleUrl(server = 'eu', method_name, fields = '', nation = '', tier = '', type = ''){
-        return `https://api.worldoftanks.${server}/wot/encyclopedia/${method_name}/?application_id=${this.getAppId()}&fields=${fields}&nation=${nation}&tier=${tier}&type=${type}`
+    static getVehicleUrl(server = 'eu', method_name, fields = '', nation = '', tier = '', type = '', tank_id = ''){
+        return `https://api.worldoftanks.${server}/wot/encyclopedia/${method_name}/?application_id=${this.getAppId()}&fields=${fields}&nation=${nation}&tier=${tier}&type=${type}&tank_id=${tank_id}`
     }
 
     // static getVehicleCharacteristicsUrl(method_name, tank_id, engine_id = '', gun_id = '', radio_id = '', suspension_id = '', turret_id = ''){
