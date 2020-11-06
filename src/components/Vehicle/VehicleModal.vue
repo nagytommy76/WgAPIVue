@@ -28,7 +28,6 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <h1>Next and previous tanks</h1>
                 <div class="tech-tree-row">
                     <!-- <div class="tech-tree-vehicle"> -->
                         <div class="tech-tree-item">
@@ -47,8 +46,8 @@
                                 <img v-bind:src="vehicle.images.big_icon">
                             </div>
                             <div class="tech-tree-item-footer">
-                                <p>Credits: {{ vehicle.price_credit }}</p>
-                                <p>experience: {{ Object.values(vehicle.prices_xp)[0] }}</p>
+                                <p>Credits: {{ vehicle.price_credit == null ? 0 : vehicle.price_credit }}</p>
+                                <!-- <p>experience: {{ Object.values(vehicle.prices_xp)[0] }}</p> -->
                             </div>
                         </div> <!-- -->
                         <div class="tech-tree-item">
@@ -159,9 +158,68 @@ export default {
             })
             this.showModules = true
         },
+        async getNextVehicle(){
+            let nextTankId = '';
+            let previousTankId = ''
+            if (this.vehicle.next_tanks === null && this.vehicle.prices_xp === null) {
+                // Ebben az esetben se előtte se utána tank, (az mind1, hogy ajándék vagy prém) tehát nem is kell megjeleníteni a footert
+                
+            }else{
+                // ha előtte és utána is van tank
+                nextTankId = Object.keys(this.vehicle.next_tanks)[0]
+                let nextTankResearchXp = Object.values(this.vehicle.next_tanks)[0]
+                previousTankId = Object.keys(this.vehicle.prices_xp)[0]
+                await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${nextTankId},${previousTankId}`)
+                .then(result => {
+                    this.nextVehicleData.tank_id = nextTankId
+                    this.nextVehicleData.tank_name = result.data.data[nextTankId].name
+                    this.nextVehicleData.big_icon = result.data.data[nextTankId].images.big_icon
+                    this.nextVehicleData.price_credits = result.data.data[nextTankId].price_credit
+                    this.nextVehicleData.research_experience = nextTankResearchXp
+                    // console.log(result.data.data[previousTankId])
+                    // Ha tier 1-es a tank akkor nincs prices_xp...
+                    if (result.data.data[previousTankId].prices_xp != null) {
+                        let previousTankResearchXp = Object.values(result.data.data[previousTankId].prices_xp)[0]
+                        this.previousVehicleData.research_experience = previousTankResearchXp
+                    }
+                    this.previousVehicleData.tank_id = previousTankId
+                    this.previousVehicleData.tank_name = result.data.data[previousTankId].name
+                    this.previousVehicleData.big_icon = result.data.data[previousTankId].images.big_icon
+                    this.previousVehicleData.price_credits = result.data.data[previousTankId].price_credit
+                        
+                })
+            }
+            if (this.vehicle.next_tanks === null && this.vehicle.prices_xp !== null) {
+                // Nincs kövi tank, de van előző, tehát T10es
+                previousTankId = Object.keys(this.vehicle.prices_xp)[0]
+                await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${previousTankId}`)
+                .then(result => {
+                    let previousTankResearchXp = Object.values(result.data.data[previousTankId].prices_xp)[0]
+
+                    this.previousVehicleData.tank_id = previousTankId
+                    this.previousVehicleData.tank_name = result.data.data[previousTankId].name
+                    this.previousVehicleData.big_icon = result.data.data[previousTankId].images.big_icon
+                    this.previousVehicleData.price_credits = result.data.data[previousTankId].price_credit
+                    this.previousVehicleData.research_experience = previousTankResearchXp
+                })
+            }
+            if (this.vehicle.next_tanks !== null && this.vehicle.prices_xp === null) {
+                // előző tank nincs de van kövi. Pl Tier 2-es
+                console.log('tier 2-ben vagyunk')
+                await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${nextTankId}`)
+                .then(result => {
+                    let nextTankResearchXp = Object.values(this.vehicle.next_tanks)[0]
+                    this.nextVehicleData.tank_id = nextTankId
+                    this.nextVehicleData.tank_name = result.data.data[nextTankId].name
+                    this.nextVehicleData.big_icon = result.data.data[nextTankId].images.big_icon
+                    this.nextVehicleData.price_credits = result.data.data[nextTankId].price_credit
+                    this.nextVehicleData.research_experience = nextTankResearchXp
+                })
+            }
+        },
         // A következő tank a next tanks, ennek a kulcsa a kövi tank id, a value pedig az XP
         // Az előző tank id-je a prices_xp key-je, az xp pedig a value
-        async getNextVehicle(){
+        async semmi(){
             let nextTankId = ''
             let nextTankResearchXp = 0
             // Refaktorálás szükséges!!!!!!!!!!!!!!!
@@ -171,7 +229,10 @@ export default {
                 nextTankResearchXp = Object.values(this.vehicle.next_tanks)[0]
             }
 
-            let previousTankId = Object.keys(this.vehicle.prices_xp)[0]
+            let previousTankId = ''
+            if(this.vehicle.prices_xp != null){
+                previousTankId = Object.keys(this.vehicle.prices_xp)[0]
+            }
             // 
             await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${nextTankId},${previousTankId}`)
             .then(result => {
@@ -184,6 +245,9 @@ export default {
                 this.nextVehicleData.research_experience = nextTankResearchXp
                 }
 
+                if(this.vehicle.prices_xp != null){
+                    
+                
                 let previousTankResearchXp = Object.values(result.data.data[previousTankId].prices_xp)[0]
 
                 this.previousVehicleData.tank_id = previousTankId
@@ -191,6 +255,7 @@ export default {
                 this.previousVehicleData.big_icon = result.data.data[previousTankId].images.big_icon
                 this.previousVehicleData.price_credits = result.data.data[previousTankId].price_credit
                 this.previousVehicleData.research_experience = previousTankResearchXp
+                }
             })
         },
         makeModuleStringToSend(module_ids = {}){
