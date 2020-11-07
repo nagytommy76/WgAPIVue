@@ -2,35 +2,35 @@
     <div class="modules-table">
         <div class="modules-table-row">
             <ModuleType 
-                v-for="(engine, index) in modules.engines" :key="index"
+                v-for="(engine) in modules.engines" :key="engine.module_id"
                 :modules="engine"
                 @click="changeSelectedModules(engine.module_id, engine.type)"
             />
         </div>
         <div class="modules-table-row">
             <ModuleType 
-                v-for="(gun, index) in modules.guns" :key="index"
+                v-for="(gun) in modules.guns" :key="gun.module_id"
                 :modules="gun"
                 @click="changeSelectedModules(gun.module_id, gun.type)"
             />
         </div>
         <div class="modules-table-row">
             <ModuleType 
-                v-for="(radio,index) in modules.radios" :key="index"
+                v-for="(radio) in modules.radios" :key="radio.module_id"
                 :modules="radio"
                 @click="changeSelectedModules(radio.module_id, radio.type)"
             />
         </div>
         <div class="modules-table-row">
             <ModuleType 
-                v-for="(suspension,index) in modules.suspensions" :key="index"
+                v-for="(suspension) in modules.suspensions" :key="suspension.module_id"
                 :modules="suspension"
                 @click="changeSelectedModules(suspension.module_id, suspension.type)"
             />
         </div>
         <div class="modules-table-row">
             <ModuleType 
-                v-for="(turret, index) in modules.turrets" :key="index"
+                v-for="(turret) in modules.turrets" :key="turret.module_id"
                 :modules="turret"
                 @click="changeSelectedModules(turret.module_id, turret.type)"
             />

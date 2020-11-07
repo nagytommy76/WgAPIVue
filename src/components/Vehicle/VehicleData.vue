@@ -44,7 +44,8 @@
         </transition>
         <transition name="modal" appear>
             <VehicleModal 
-            :vehicle="selectedVehicle" @close="showVehicleModal = false" v-if="showVehicleModal" 
+                :vehicle="selectedVehicle" @close="showVehicleModal = false" v-if="showVehicleModal" 
+                v-model="selectedVehicle"
             />
         </transition>
     </section>
@@ -60,6 +61,9 @@ export default {
         VehicleModal,
     },
     computed:{
+        vehicleList(){
+            return 'semmi'
+        }
     },
     data() {
         return {

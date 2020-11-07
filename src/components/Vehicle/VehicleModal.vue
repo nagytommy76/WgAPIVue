@@ -29,38 +29,30 @@
             </div>
             <div class="modal-footer">
                 <div class="tech-tree-row">
-                    <!-- <div class="tech-tree-vehicle"> -->
-                        <div class="tech-tree-item">
-                            <div class="tech-tree-item-head">
-                                <h3>{{ previousVehicleData.tank_name }}</h3>
-                                <img v-bind:src="previousVehicleData.big_icon">
-                            </div>
-                            <div class="tech-tree-item-footer">
-                                <p>Credits: {{ previousVehicleData.price_credits }}</p>
-                                <p>Research: {{ previousVehicleData.research_experience }}</p>
-                            </div>
-                        </div> <!-- -->
-                        <div class="tech-tree-item">
-                            <div class="tech-tree-item-head">
-                                <h3>{{ vehicle.name }}</h3>
-                                <img v-bind:src="vehicle.images.big_icon">
-                            </div>
-                            <div class="tech-tree-item-footer">
-                                <p>Credits: {{ vehicle.price_credit == null ? 0 : vehicle.price_credit }}</p>
-                                <!-- <p>experience: {{ Object.values(vehicle.prices_xp)[0] }}</p> -->
-                            </div>
-                        </div> <!-- -->
-                        <div class="tech-tree-item">
-                            <div class="tech-tree-item-head">
-                                <h3>{{ nextVehicleData.tank_name }}</h3>
-                                <img v-bind:src="nextVehicleData.big_icon">
-                            </div>
-                            <div class="tech-tree-item-footer">
-                                <p>Credits: {{ nextVehicleData.price_credits }}</p>
-                                <p>Research: {{ nextVehicleData.research_experience }}</p>
-                            </div>
-                        </div> <!-- -->
-                    <!-- </div> -->
+                    <TechTreeItem 
+                        v-if="showPreviousTechTree"
+                        :tankName="previousVehicleData.tank_name"
+                        :image="previousVehicleData.big_icon"
+                        :priceCredits="previousVehicleData.price_credits"
+                        :reserachExp="previousVehicleData.research_experience"
+                        @click="test(previousVehicleData.tank_id)"
+                    />
+                    <TechTreeItem 
+                        v-if="showCurrentTechTree"
+                        :tankName="vehicle.name"
+                        :image="vehicle.images.big_icon"
+                        :priceCredits="vehicle.price_credit == null ? 0 : vehicle.price_credit"
+                        :reserachExp="vehicle.prices_xp == null ? 0 : Object.values(vehicle.prices_xp)[0]"
+                        @click="test(vehicle.tank_id)"
+                    />
+                    <TechTreeItem 
+                        v-if="showNextTechTree"
+                        :tankName="nextVehicleData.tank_name"
+                        :image="nextVehicleData.big_icon"
+                        :priceCredits="nextVehicleData.price_credits"
+                        :reserachExp="nextVehicleData.research_experience"
+                        @click="test(nextVehicleData.tank_id)"
+                    />
                 </div>
             </div>
         </div>
@@ -71,31 +63,44 @@ import Vehicle from '../../WGClass/Tankopedia/Vehicle'
 import VehicleDetails from './VehicleDetails/Details'
 import VehicleModules from './VehicleModules/Modules' 
 
+import TechTreeItem from './TechTree/TechTreeItem'
+
 export default {
     name: 'Vehicle Modal',
     components:{
         VehicleDetails,
         VehicleModules,
+        TechTreeItem,
     },
     props:{
         vehicle: Object,
     },
+    computed: {
+        vehicleList:{
+            get(){
+                return this.$parent
+            }
+        }
+    },
     data() {
         return {
             nextVehicleData: {
-                tank_id: '',
+                tank_id: 0,
                 tank_name: '',
                 research_experience: 0,
                 big_icon: '',
                 price_credits: 0,
             },
             previousVehicleData: {
-                tank_id: '',
+                tank_id: 0,
                 tank_name: '',
                 research_experience: 0,
                 big_icon: '',
                 price_credits: 0,
             },
+            showPreviousTechTree: false,
+            showCurrentTechTree: false,
+            showNextTechTree: false,
             vehicleType: '',
             vehicleNation: '',
             vehicleCharacteristics: {},
@@ -161,102 +166,78 @@ export default {
         async getNextVehicle(){
             let nextTankId = '';
             let previousTankId = ''
-            if (this.vehicle.next_tanks === null && this.vehicle.prices_xp === null) {
-                // Ebben az esetben se előtte se utána tank, (az mind1, hogy ajándék vagy prém) tehát nem is kell megjeleníteni a footert
-                
+            // Ha nincs utána tank, tehát pl T9-es
+            if (this.vehicle.next_tanks === null) {
+                if(this.vehicle.prices_xp !== null){
+                    // ha nincs utána de van előtte T9
+                    // console.log('ha nincs utána de van előtte')
+                    previousTankId = Object.keys(this.vehicle.prices_xp)[0]
+                    await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${nextTankId},${previousTankId}`)
+                    .then(result =>{
+                        // this.previousVehicleData.tank_id = previousTankId
+                        // this.previousVehicleData.tank_name = result.data.data[previousTankId].name
+                        // this.previousVehicleData.big_icon = result.data.data[previousTankId].images.big_icon
+                        // this.previousVehicleData.price_credits = result.data.data[previousTankId].price_credit
+                        // if (result.data.data[previousTankId].prices_xp != null) {
+                        //     this.previousVehicleData.research_experience = Object.values(result.data.data[previousTankId].prices_xp)[0]
+                        // }
+                        let prevTankResearchExp = result.data.data[previousTankId].prices_xp === null ? 0 : Object.values(result.data.data[previousTankId].prices_xp)[0]
+                        this.fillTechTreeObjects(this.previousVehicleData, result, previousTankId, prevTankResearchExp)
+
+                        this.showCurrentTechTree = true
+                        this.showPreviousTechTree = true
+                    })
+                }
             }else{
-                // ha előtte és utána is van tank
-                nextTankId = Object.keys(this.vehicle.next_tanks)[0]
-                let nextTankResearchXp = Object.values(this.vehicle.next_tanks)[0]
-                previousTankId = Object.keys(this.vehicle.prices_xp)[0]
-                await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${nextTankId},${previousTankId}`)
-                .then(result => {
-                    this.nextVehicleData.tank_id = nextTankId
-                    this.nextVehicleData.tank_name = result.data.data[nextTankId].name
-                    this.nextVehicleData.big_icon = result.data.data[nextTankId].images.big_icon
-                    this.nextVehicleData.price_credits = result.data.data[nextTankId].price_credit
-                    this.nextVehicleData.research_experience = nextTankResearchXp
-                    // console.log(result.data.data[previousTankId])
-                    // Ha tier 1-es a tank akkor nincs prices_xp...
-                    if (result.data.data[previousTankId].prices_xp != null) {
-                        let previousTankResearchXp = Object.values(result.data.data[previousTankId].prices_xp)[0]
-                        this.previousVehicleData.research_experience = previousTankResearchXp
-                    }
-                    this.previousVehicleData.tank_id = previousTankId
-                    this.previousVehicleData.tank_name = result.data.data[previousTankId].name
-                    this.previousVehicleData.big_icon = result.data.data[previousTankId].images.big_icon
-                    this.previousVehicleData.price_credits = result.data.data[previousTankId].price_credit
-                        
-                })
-            }
-            if (this.vehicle.next_tanks === null && this.vehicle.prices_xp !== null) {
-                // Nincs kövi tank, de van előző, tehát T10es
-                previousTankId = Object.keys(this.vehicle.prices_xp)[0]
-                await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${previousTankId}`)
-                .then(result => {
-                    let previousTankResearchXp = Object.values(result.data.data[previousTankId].prices_xp)[0]
-
-                    this.previousVehicleData.tank_id = previousTankId
-                    this.previousVehicleData.tank_name = result.data.data[previousTankId].name
-                    this.previousVehicleData.big_icon = result.data.data[previousTankId].images.big_icon
-                    this.previousVehicleData.price_credits = result.data.data[previousTankId].price_credit
-                    this.previousVehicleData.research_experience = previousTankResearchXp
-                })
-            }
-            if (this.vehicle.next_tanks !== null && this.vehicle.prices_xp === null) {
-                // előző tank nincs de van kövi. Pl Tier 2-es
-                console.log('tier 2-ben vagyunk')
-                await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${nextTankId}`)
-                .then(result => {
+                // Ha van kövi tank
+                if (this.vehicle.prices_xp !== null) {
+                    // console.log('Ha van kövi tank és van előző')
+                    nextTankId = Object.keys(this.vehicle.next_tanks)[0]
                     let nextTankResearchXp = Object.values(this.vehicle.next_tanks)[0]
-                    this.nextVehicleData.tank_id = nextTankId
-                    this.nextVehicleData.tank_name = result.data.data[nextTankId].name
-                    this.nextVehicleData.big_icon = result.data.data[nextTankId].images.big_icon
-                    this.nextVehicleData.price_credits = result.data.data[nextTankId].price_credit
-                    this.nextVehicleData.research_experience = nextTankResearchXp
-                })
+
+                    previousTankId = Object.keys(this.vehicle.prices_xp)[0]
+
+                    await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${nextTankId},${previousTankId}`)
+                    .then(result => {
+                        this.fillTechTreeObjects(this.nextVehicleData, result, nextTankId, nextTankResearchXp)
+                        // this.nextVehicleData.tank_id = nextTankId
+                        // this.nextVehicleData.tank_name = result.data.data[nextTankId].name
+                        // this.nextVehicleData.big_icon = result.data.data[nextTankId].images.big_icon
+                        // this.nextVehicleData.price_credits = result.data.data[nextTankId].price_credit
+                        // this.nextVehicleData.research_experience = nextTankResearchXp
+
+                        // this.previousVehicleData.tank_id = previousTankId
+                        // this.previousVehicleData.tank_name = result.data.data[previousTankId].name
+                        // this.previousVehicleData.big_icon = result.data.data[previousTankId].images.big_icon
+                        // this.previousVehicleData.price_credits = result.data.data[previousTankId].price_credit
+                        // if (result.data.data[previousTankId].prices_xp != null) {
+                        //     this.previousVehicleData.research_experience = Object.values(result.data.data[previousTankId].prices_xp)[0]
+                        // }
+                        let prevTankResearchExp = result.data.data[previousTankId].prices_xp === null ? 0 : Object.values(result.data.data[previousTankId].prices_xp)[0]
+                        this.fillTechTreeObjects(this.previousVehicleData, result, previousTankId, prevTankResearchExp)
+
+                        this.showPreviousTechTree = true
+                        this.showCurrentTechTree = true
+                        this.showNextTechTree = true
+                    })
+                }else{
+                    // console.log('TIER 1')
+                    let nextTankResearchXp = Object.values(this.vehicle.next_tanks)[0]
+                    nextTankId = Object.keys(this.vehicle.next_tanks)[0]
+
+                    await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${nextTankId},${previousTankId}`)
+                    .then(result =>{
+                        this.fillTechTreeObjects(this.nextVehicleData, result, nextTankId, nextTankResearchXp)
+
+                        this.showCurrentTechTree = true
+                        this.showNextTechTree = true
+                    })
+                }
             }
+
         },
-        // A következő tank a next tanks, ennek a kulcsa a kövi tank id, a value pedig az XP
-        // Az előző tank id-je a prices_xp key-je, az xp pedig a value
-        async semmi(){
-            let nextTankId = ''
-            let nextTankResearchXp = 0
-            // Refaktorálás szükséges!!!!!!!!!!!!!!!
-            // Ugyan ezt megoldani, csak a Tier 1-es tankoknál, ott nincs previous tank!!!!!!!!!!!!!!
-            if(this.vehicle.next_tanks != null){
-                nextTankId = Object.keys(this.vehicle.next_tanks)[0]
-                nextTankResearchXp = Object.values(this.vehicle.next_tanks)[0]
-            }
-
-            let previousTankId = ''
-            if(this.vehicle.prices_xp != null){
-                previousTankId = Object.keys(this.vehicle.prices_xp)[0]
-            }
-            // 
-            await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${nextTankId},${previousTankId}`)
-            .then(result => {
-                // console.log(result.data)
-                if(this.vehicle.next_tanks != null){
-                this.nextVehicleData.tank_id = nextTankId
-                this.nextVehicleData.tank_name = result.data.data[nextTankId].name
-                this.nextVehicleData.big_icon = result.data.data[nextTankId].images.big_icon
-                this.nextVehicleData.price_credits = result.data.data[nextTankId].price_credit
-                this.nextVehicleData.research_experience = nextTankResearchXp
-                }
-
-                if(this.vehicle.prices_xp != null){
-                    
-                
-                let previousTankResearchXp = Object.values(result.data.data[previousTankId].prices_xp)[0]
-
-                this.previousVehicleData.tank_id = previousTankId
-                this.previousVehicleData.tank_name = result.data.data[previousTankId].name
-                this.previousVehicleData.big_icon = result.data.data[previousTankId].images.big_icon
-                this.previousVehicleData.price_credits = result.data.data[previousTankId].price_credit
-                this.previousVehicleData.research_experience = previousTankResearchXp
-                }
-            })
+        test(tankID){
+            console.log(tankID)
         },
         makeModuleStringToSend(module_ids = {}){
             let resultString = '';
@@ -287,7 +268,15 @@ export default {
                     }
                 } 
             }
-        }
+        },
+        fillTechTreeObjects(vehicleData, resultData, tankID, ResearchXp = 0){
+            let tankResult = resultData.data.data[tankID]
+            vehicleData.tank_id = tankID
+            vehicleData.tank_name = tankResult.name
+            vehicleData.big_icon = tankResult.images.big_icon
+            vehicleData.price_credits = tankResult.price_credit
+            vehicleData.research_experience = ResearchXp
+        },
     },
         
 }
