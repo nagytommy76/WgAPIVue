@@ -1,18 +1,14 @@
 <template>
     <div class="modal-background">
         <div class="modal">
-            <div class="modal-head">
-                <div @click="$emit('close')" class="close-modal"><i class="fas fa-times"></i></div>
-                <div class="vehicle-head">
-                    <img v-bind:src="vehicle.images.big_icon" class="vehicle-head-image">
-                    <h1 class="vehicle-head-name">
-                        {{ vehicle.name }} |
-                        Tier {{ vehicle.tier}} |
-                        {{ vehicleNation }} |
-                        {{ vehicleType }}                    
-                    </h1>
-                </div>
-            </div>
+            <div @click="$emit('close')" class="close-modal"><i class="fas fa-times"></i></div>
+            <ModalHeader 
+                :image="vehicle.images.big_icon"
+                :vehicleName="vehicle.name"
+                :vehicleTier="vehicle.tier"
+                :Nation="vehicle.nation"
+                :Type="vehicle.type"
+            />
             <div class="modal-body">
                 <div class="left">
                     <VehicleModules 
@@ -59,31 +55,42 @@
     </div>
 </template>
 <script>
+// import axios from 'axios'
 import Vehicle from '../../WGClass/Tankopedia/Vehicle'
 import VehicleDetails from './VehicleDetails/Details'
 import VehicleModules from './VehicleModules/Modules' 
 
+import ModalHeader from './VehicleDetails/ModalHeader'
 import TechTreeItem from './TechTree/TechTreeItem'
-
+// Átjön az összes jármű, és itt választom ki, hogy melyik id-jű jelenjen meg
 export default {
     name: 'Vehicle Modal',
     components:{
         VehicleDetails,
         VehicleModules,
         TechTreeItem,
+        ModalHeader,
     },
     props:{
-        vehicle: Object,
+        // vehicle: Object,
+        // selectedNation: String,
+        vehicleId: Number,
+        allVehicles: Object,
     },
     computed: {
-        vehicleList:{
+        vehicle:{
             get(){
-                return this.$parent
+                return this.allVehicles[this.selectedVehicleId]
+            },
+            set(vehicles){
+                this.selectedVehicleId = vehicles
             }
-        }
+        },
     },
     data() {
         return {
+            selectedVehicleId: this.vehicleId,
+            allVehicle : {},
             nextVehicleData: {
                 tank_id: 0,
                 tank_name: '',
@@ -101,8 +108,6 @@ export default {
             showPreviousTechTree: false,
             showCurrentTechTree: false,
             showNextTechTree: false,
-            vehicleType: '',
-            vehicleNation: '',
             vehicleCharacteristics: {},
             vehicleModules: {
                 engines:[],
@@ -112,42 +117,53 @@ export default {
                 turrets: [],
             },
             selectedVehicleModulesId: {
-                engine_id: this.vehicle.default_profile.modules.engine_id,
-                gun_id: this.vehicle.default_profile.modules.gun_id,
-                radio_id: this.vehicle.default_profile.modules.radio_id,
-                suspension_id: this.vehicle.default_profile.modules.suspension_id,
-                // Megoldva: ha pl nincs turret akkor null lesz a turret_id és így nem tudja lekérni a vehicle characteristics-et
-                turret_id: this.vehicle.default_profile.modules.turret_id == null ? '' : this.vehicle.default_profile.modules.turret_id
+                engine_id: 0,
+                gun_id: 0,
+                radio_id: 0,
+                suspension_id: 0,
+            // Megoldva: ha pl nincs turret akkor null lesz a turret_id és így nem tudja lekérni a vehicle characteristics-et
+                 turret_id: 0
             },
             showCharacteristics: false,
             showModules: false,
         }
     },
     created(){
-        this.getTankTypeAndNation()
-        this.getTankCharacteristics()
+        // this.fillAllVehicle()
         this.getVehicleModules()
+        this.fillSelectedModulesId()
         this.getNextVehicle()
+        this.getTankCharacteristics()
     },
     methods:{
+        // async fillAllVehicle(){
+        //     // this.allVehicle = this.allVehicles
+        //     await axios.get(`https://api.worldoftanks.eu/wot/encyclopedia/vehicles/?application_id=1ebc47797ed02032c3c5489cbba60f6c&nation=${this.selectedNation}`)
+        //         .then(result =>{
+        //             console.log(result.data.data)
+        //             this.vehicle = result.data.data
+                    
+        //         })
+        // },
+        fillSelectedModulesId(){
+            this.selectedVehicleModulesId.engine_id = this.vehicle.default_profile.modules.engine_id
+            this.selectedVehicleModulesId.radio_id = this.vehicle.default_profile.modules.radio_id
+            this.selectedVehicleModulesId.gun_id = this.vehicle.default_profile.modules.gun_id
+            this.selectedVehicleModulesId.suspension_id = this.vehicle.default_profile.modules.suspension_id
+            this.selectedVehicleModulesId.turret_id = this.vehicle.default_profile.modules.turret_id == null ? '' : this.vehicle.default_profile.modules.turret_id
+        },
         async getTankCharacteristics(){
             await Vehicle.getVehicleCharacteristics(this.vehicle.tank_id, this.selectedVehicleModulesId)
             .then(characteristics => {
                 // console.log(characteristics)
                 // Hiba, ha nem a következő kompatibilis modul lesz kiválsztva a server 404 "invalid module ids" errort dob
                 if(characteristics.data.status != 'error'){
+                    this.showCharacteristics = false
                     this.vehicleCharacteristics = characteristics.data.data[this.vehicle.tank_id]
                     this.showCharacteristics = true
                 }else{
                     // ide akkor lépünk be ha error van és a megelőző modult kell kiválasztani
                 }
-            })
-        },
-        async getTankTypeAndNation(){
-            await Vehicle.getTankopediaInformation('eu', 'vehicle_nations,vehicle_types')
-            .then(result => {
-                this.vehicleType = result.data.data.vehicle_types[this.vehicle.type]
-                this.vehicleNation = result.data.data.vehicle_nations[this.vehicle.nation]
             })
         },
         async getVehicleModules(){
@@ -166,21 +182,27 @@ export default {
         async getNextVehicle(){
             let nextTankId = '';
             let previousTankId = ''
+            // if (this.vehicle === undefined) {
+            //     // Ha undefined a tankok akkor, lekérem az egy országhoz tartozó összes tankot (pl ussr) mert ha pl
+            //     // lekérek ussr heavy tankokat és a tech treen van egy td az nincs benne az előzőleg lekért tankokban!
+            //     // Esetleges megoldás: 
+            //     // Ha megnyitom ezt a modalt akkor lekérem az összes egy nemzethez tartozó tankot, így elvileg megoldva!!!!
+            //     // await Vehicle.getAllVehicles('eu', this.selectedNation, 0, '', '', this.selectedVehicleId)
+            //     // .then(result => {
+
+            //     // })
+            //     await axios.get(`https://api.worldoftanks.eu/wot/encyclopedia/vehicles/?application_id=1ebc47797ed02032c3c5489cbba60f6c&nation=${this.selectedNation}`)
+            //     .then(result =>{
+            //         this.vehicle = result.data.data
+            //     })
+            // }
             // Ha nincs utána tank, tehát pl T9-es
             if (this.vehicle.next_tanks === null) {
                 if(this.vehicle.prices_xp !== null){
                     // ha nincs utána de van előtte T9
-                    // console.log('ha nincs utána de van előtte')
-                    previousTankId = Object.keys(this.vehicle.prices_xp)[0]
+                    previousTankId = this.getObjectKeysInInteger(this.vehicle.prices_xp)
                     await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${nextTankId},${previousTankId}`)
                     .then(result =>{
-                        // this.previousVehicleData.tank_id = previousTankId
-                        // this.previousVehicleData.tank_name = result.data.data[previousTankId].name
-                        // this.previousVehicleData.big_icon = result.data.data[previousTankId].images.big_icon
-                        // this.previousVehicleData.price_credits = result.data.data[previousTankId].price_credit
-                        // if (result.data.data[previousTankId].prices_xp != null) {
-                        //     this.previousVehicleData.research_experience = Object.values(result.data.data[previousTankId].prices_xp)[0]
-                        // }
                         let prevTankResearchExp = result.data.data[previousTankId].prices_xp === null ? 0 : Object.values(result.data.data[previousTankId].prices_xp)[0]
                         this.fillTechTreeObjects(this.previousVehicleData, result, previousTankId, prevTankResearchExp)
 
@@ -192,28 +214,16 @@ export default {
                 // Ha van kövi tank
                 if (this.vehicle.prices_xp !== null) {
                     // console.log('Ha van kövi tank és van előző')
-                    nextTankId = Object.keys(this.vehicle.next_tanks)[0]
-                    let nextTankResearchXp = Object.values(this.vehicle.next_tanks)[0]
+                    nextTankId = this.getObjectKeysInInteger(this.vehicle.next_tanks)
+                    let nextTankResearchXp = this.getObjectKeysInInteger(this.vehicle.next_tanks, false)
 
-                    previousTankId = Object.keys(this.vehicle.prices_xp)[0]
+                    previousTankId = this.getObjectKeysInInteger(this.vehicle.prices_xp)
 
                     await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${nextTankId},${previousTankId}`)
                     .then(result => {
                         this.fillTechTreeObjects(this.nextVehicleData, result, nextTankId, nextTankResearchXp)
-                        // this.nextVehicleData.tank_id = nextTankId
-                        // this.nextVehicleData.tank_name = result.data.data[nextTankId].name
-                        // this.nextVehicleData.big_icon = result.data.data[nextTankId].images.big_icon
-                        // this.nextVehicleData.price_credits = result.data.data[nextTankId].price_credit
-                        // this.nextVehicleData.research_experience = nextTankResearchXp
 
-                        // this.previousVehicleData.tank_id = previousTankId
-                        // this.previousVehicleData.tank_name = result.data.data[previousTankId].name
-                        // this.previousVehicleData.big_icon = result.data.data[previousTankId].images.big_icon
-                        // this.previousVehicleData.price_credits = result.data.data[previousTankId].price_credit
-                        // if (result.data.data[previousTankId].prices_xp != null) {
-                        //     this.previousVehicleData.research_experience = Object.values(result.data.data[previousTankId].prices_xp)[0]
-                        // }
-                        let prevTankResearchExp = result.data.data[previousTankId].prices_xp === null ? 0 : Object.values(result.data.data[previousTankId].prices_xp)[0]
+                        let prevTankResearchExp = result.data.data[previousTankId].prices_xp === null ? 0 : this.getObjectKeysInInteger(result.data.data[previousTankId].prices_xp, false)
                         this.fillTechTreeObjects(this.previousVehicleData, result, previousTankId, prevTankResearchExp)
 
                         this.showPreviousTechTree = true
@@ -221,9 +231,8 @@ export default {
                         this.showNextTechTree = true
                     })
                 }else{
-                    // console.log('TIER 1')
-                    let nextTankResearchXp = Object.values(this.vehicle.next_tanks)[0]
-                    nextTankId = Object.keys(this.vehicle.next_tanks)[0]
+                    let nextTankResearchXp = this.getObjectKeysInInteger(this.vehicle.next_tanks, false)
+                    nextTankId = this.getObjectKeysInInteger(this.vehicle.next_tanks)
 
                     await Vehicle.getAllVehicles('eu','','','','name,images,price_credit,tank_id,next_tanks,prices_xp',`${nextTankId},${previousTankId}`)
                     .then(result =>{
@@ -236,7 +245,20 @@ export default {
             }
 
         },
-        test(tankID){
+        async test(tankID){
+            // this.vehicle = tankID
+            // if (this.vehicle === undefined) {
+            //     await axios.get(`https://api.worldoftanks.eu/wot/encyclopedia/vehicles/?application_id=1ebc47797ed02032c3c5489cbba60f6c&nation=${this.selectedNation}`)
+            //     .then(result =>{
+            //         console.log(result.data.data)
+            //         this.vehicle = result.data.data
+            //         this.getNextVehicle()
+            //         this.getTankCharacteristics()
+            //     })
+            // }
+            
+            // this.getVehicleModules()
+            
             console.log(tankID)
         },
         makeModuleStringToSend(module_ids = {}){
@@ -276,6 +298,9 @@ export default {
             vehicleData.big_icon = tankResult.images.big_icon
             vehicleData.price_credits = tankResult.price_credit
             vehicleData.research_experience = ResearchXp
+        },
+        getObjectKeysInInteger(vehicleId, keys = true){
+            return parseInt(keys ? Object.keys(vehicleId)[0] : Object.values(vehicleId)[0])           
         },
     },
         

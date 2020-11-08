@@ -1,6 +1,5 @@
 <template>
     <section class="vehicle-data">
-        <!-- <h1 class="main-title">Tank Adatok</h1> -->
         <div class="table-view">
             <div class="table-view-header">
                 <div class="table-view-header-row full-size">Vehicle Name</div>
@@ -11,7 +10,7 @@
                 <div class="table-view-header-row flex-centered">Weight</div>
             </div>
             <div class="table-view-body">
-                <div class="table-view-body-row modal-open" v-for="(vehicle, index) in vehicles.data" :key="index"  @click="openVehicleModal(index)">
+                <div class="table-view-body-row modal-open" v-for="(vehicle, index) in vehicles" :key="index"  @click="openVehicleModal(index)">
                     <div class="table-view-body-row-col full-size">
                         <span class="vehicle-contour-icon">
                             <img :src="vehicle.images.contour_icon" />
@@ -44,36 +43,42 @@
         </transition>
         <transition name="modal" appear>
             <VehicleModal 
-                :vehicle="selectedVehicle" @close="showVehicleModal = false" v-if="showVehicleModal" 
-                v-model="selectedVehicle"
+                v-if="showVehicleModal"
+                @close="showVehicleModal = false"
+                :vehicles="vehicles"
+                :allVehicles="allVehicles"
+                :vehicleId="selectedVehicleId"
             />
         </transition>
     </section>
 </template>
 <script>
+// import Vehicle from '../WGClass/Tankopedia/Vehicle'
 import VehicleModal from './VehicleModal'
 
 export default {
+    name: 'Vehicle List',
     props: {
         vehicles: Object,
+        allVehicles: Object,
     },
     components:{
         VehicleModal,
     },
     computed:{
-        vehicleList(){
-            return 'semmi'
-        }
+        
     },
     data() {
         return {
             showVehicleModal : false,
-            selectedVehicle: {},
+            selectedVehicle: this.vehicles.data,
+            selectedVehicleId: 0,
         }
     },
     methods: {
         async openVehicleModal(vehicleID){
-            this.selectedVehicle = this.vehicles.data[vehicleID]
+            // this.selectedVehicle = this.vehicles.data[vehicleID]
+            this.selectedVehicleId = parseInt(vehicleID)
             this.showVehicleModal = true
         },
     },
