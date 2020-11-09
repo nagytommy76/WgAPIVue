@@ -34,7 +34,6 @@ export default {
     },
     props:{
         Characteristics: Object,
-        
     },
 }
 </script>

@@ -66,27 +66,13 @@ export default {
         async getVehicles(){
             await Vehicle.getAllVehicles('eu', this.selectedNation, '', '')
             .then(result => {
-                this.allVehicles = result.data.data
-                if(this.selectedType !== '' || this.selectedTier !== 0){
-                    console.log(this.selectedType)
-                    for (const key of Object.entries(this.allVehicles)) {
-                        console.log(key)
-                        
-                        if(this.selectedType == key[1].type){
-                            this.vehicles.push(key)
-                        }
-                    }
+                for (const value in result.data.data){
+                    this.vehicles.push(result.data.data[value])
                 }
-               
-                // this.vehicles = result.data.data
+                this.allVehicles = result.data.data
                 this.showVehicleList = true
             })
         },
-        // async getAllVehcles(){
-        //     await Vehicle.getAllVehicles('eu', this.selectedNation, this.selectedTier, this.selectedType).then(all =>{
-        //         console.log(all)
-        //     })
-        // }
     }
 }
 </script>

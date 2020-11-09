@@ -10,34 +10,19 @@
                 <div class="table-view-header-row flex-centered">Weight</div>
             </div>
             <div class="table-view-body">
-                <div class="table-view-body-row modal-open" v-for="(vehicle, index) in vehicles" :key="index"  @click="openVehicleModal(index)">
-                    <div class="table-view-body-row-col full-size">
-                        <span class="vehicle-contour-icon">
-                            <img :src="vehicle.images.contour_icon" />
-                        </span>
-                        <p class="vehicle-name">
-                            {{ vehicle.name }}
-                        </p>
-                    </div>
-                    <div class="table-view-body-row-col flex-centered">
-                        {{ vehicle.tier }}
-                    </div>
-                    <div class="table-view-body-row-col flex-centered">
-                        {{ vehicle.default_profile.hp }} HP
-                    </div>
-                    <div class="table-view-body-row-col flex-centered">
-                        {{ vehicle.default_profile.gun.aim_time }} s
-                    </div>
-                    <div class="table-view-body-row-col flex-centered">
-                        {{ vehicle.default_profile.gun.dispersion }}
-                    </div>
-                    <div class="table-view-body-row-col flex-centered">
-                        {{ vehicle.default_profile.weight }} T
-                    </div>
-                </div>
+                <ListItem 
+                    v-for="vehicle in vehicles" :key="vehicle.tank_id"  
+                    @click="openVehicleModal(vehicle.tank_id)"
+                    :contourIcon="vehicle.images.contour_icon"
+                    :vehicleName="vehicle.name"
+                    :VehicleTier="vehicle.tier"
+                    :profileHp="vehicle.default_profile.hp"
+                    :gunAimTime="vehicle.default_profile.gun.aim_time"
+                    :gunDispersion="vehicle.default_profile.gun.dispersion"
+                    :weight="vehicle.default_profile.weight"
+                />
             </div>
         </div>
-
         <transition name="fade" appear>
             <div class="fade-in" v-if="showVehicleModal" @click="showVehicleModal = false"></div>
         </transition>
@@ -45,7 +30,7 @@
             <VehicleModal 
                 v-if="showVehicleModal"
                 @close="showVehicleModal = false"
-                :vehicles="vehicles"
+                
                 :allVehicles="allVehicles"
                 :vehicleId="selectedVehicleId"
             />
@@ -53,8 +38,8 @@
     </section>
 </template>
 <script>
-// import Vehicle from '../WGClass/Tankopedia/Vehicle'
 import VehicleModal from './VehicleModal'
+import ListItem from './VehicleListItem'
 
 export default {
     name: 'Vehicle List',
@@ -64,6 +49,7 @@ export default {
     },
     components:{
         VehicleModal,
+        ListItem,
     },
     computed:{
         
@@ -77,7 +63,6 @@ export default {
     },
     methods: {
         async openVehicleModal(vehicleID){
-            // this.selectedVehicle = this.vehicles.data[vehicleID]
             this.selectedVehicleId = parseInt(vehicleID)
             this.showVehicleModal = true
         },

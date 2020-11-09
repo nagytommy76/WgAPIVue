@@ -31,7 +31,7 @@
                         :image="previousVehicleData.big_icon"
                         :priceCredits="previousVehicleData.price_credits"
                         :reserachExp="previousVehicleData.research_experience"
-                        @click="test(previousVehicleData.tank_id)"
+                        @click="getTankInfoTechTree(previousVehicleData.tank_id)"
                     />
                     <TechTreeItem 
                         v-if="showCurrentTechTree"
@@ -39,7 +39,7 @@
                         :image="vehicle.images.big_icon"
                         :priceCredits="vehicle.price_credit == null ? 0 : vehicle.price_credit"
                         :reserachExp="vehicle.prices_xp == null ? 0 : Object.values(vehicle.prices_xp)[0]"
-                        @click="test(vehicle.tank_id)"
+                        @click="getTankInfoTechTree(vehicle.tank_id)"
                     />
                     <TechTreeItem 
                         v-if="showNextTechTree"
@@ -47,7 +47,7 @@
                         :image="nextVehicleData.big_icon"
                         :priceCredits="nextVehicleData.price_credits"
                         :reserachExp="nextVehicleData.research_experience"
-                        @click="test(nextVehicleData.tank_id)"
+                        @click="getTankInfoTechTree(nextVehicleData.tank_id)"
                     />
                 </div>
             </div>
@@ -82,8 +82,8 @@ export default {
             get(){
                 return this.allVehicles[this.selectedVehicleId]
             },
-            set(vehicles){
-                this.selectedVehicleId = vehicles
+            set(tankId){
+                this.selectedVehicleId = tankId
             }
         },
     },
@@ -121,7 +121,6 @@ export default {
                 gun_id: 0,
                 radio_id: 0,
                 suspension_id: 0,
-            // Megoldva: ha pl nincs turret akkor null lesz a turret_id és így nem tudja lekérni a vehicle characteristics-et
                  turret_id: 0
             },
             showCharacteristics: false,
@@ -129,36 +128,25 @@ export default {
         }
     },
     created(){
-        // this.fillAllVehicle()
         this.getVehicleModules()
         this.fillSelectedModulesId()
         this.getNextVehicle()
         this.getTankCharacteristics()
     },
     methods:{
-        // async fillAllVehicle(){
-        //     // this.allVehicle = this.allVehicles
-        //     await axios.get(`https://api.worldoftanks.eu/wot/encyclopedia/vehicles/?application_id=1ebc47797ed02032c3c5489cbba60f6c&nation=${this.selectedNation}`)
-        //         .then(result =>{
-        //             console.log(result.data.data)
-        //             this.vehicle = result.data.data
-                    
-        //         })
-        // },
         fillSelectedModulesId(){
             this.selectedVehicleModulesId.engine_id = this.vehicle.default_profile.modules.engine_id
             this.selectedVehicleModulesId.radio_id = this.vehicle.default_profile.modules.radio_id
             this.selectedVehicleModulesId.gun_id = this.vehicle.default_profile.modules.gun_id
             this.selectedVehicleModulesId.suspension_id = this.vehicle.default_profile.modules.suspension_id
+            // Megoldva: ha pl nincs turret akkor null lesz a turret_id és így nem tudja lekérni a vehicle characteristics-et
             this.selectedVehicleModulesId.turret_id = this.vehicle.default_profile.modules.turret_id == null ? '' : this.vehicle.default_profile.modules.turret_id
         },
         async getTankCharacteristics(){
             await Vehicle.getVehicleCharacteristics(this.vehicle.tank_id, this.selectedVehicleModulesId)
             .then(characteristics => {
-                // console.log(characteristics)
                 // Hiba, ha nem a következő kompatibilis modul lesz kiválsztva a server 404 "invalid module ids" errort dob
                 if(characteristics.data.status != 'error'){
-                    this.showCharacteristics = false
                     this.vehicleCharacteristics = characteristics.data.data[this.vehicle.tank_id]
                     this.showCharacteristics = true
                 }else{
@@ -166,7 +154,10 @@ export default {
                 }
             })
         },
-        async getVehicleModules(){
+        async getVehicleModules(setArrayDefault = false){
+            if(setArrayDefault){
+                this.setModuleArrayToDefault()
+            }
             await Vehicle.getVehicleModules(this.makeModuleStringToSend(this.vehicle.modules_tree))
             .then(result => {
                 this.fillVehicleModules(this.vehicleModules.engines, result.data.data, this.vehicle.default_profile.modules.engine_id)
@@ -245,21 +236,13 @@ export default {
             }
 
         },
-        async test(tankID){
-            // this.vehicle = tankID
+        getTankInfoTechTree(tankID){
+            this.vehicle = tankID
             // if (this.vehicle === undefined) {
-            //     await axios.get(`https://api.worldoftanks.eu/wot/encyclopedia/vehicles/?application_id=1ebc47797ed02032c3c5489cbba60f6c&nation=${this.selectedNation}`)
-            //     .then(result =>{
-            //         console.log(result.data.data)
-            //         this.vehicle = result.data.data
-            //         this.getNextVehicle()
-            //         this.getTankCharacteristics()
-            //     })
-            // }
-            
-            // this.getVehicleModules()
-            
-            console.log(tankID)
+            this.fillSelectedModulesId()
+            this.getVehicleModules(true)
+            this.getNextVehicle()
+            this.getTankCharacteristics()
         },
         makeModuleStringToSend(module_ids = {}){
             let resultString = '';
@@ -302,6 +285,13 @@ export default {
         getObjectKeysInInteger(vehicleId, keys = true){
             return parseInt(keys ? Object.keys(vehicleId)[0] : Object.values(vehicleId)[0])           
         },
+        setModuleArrayToDefault(){
+            this.vehicleModules.engines = []
+            this.vehicleModules.guns = []
+            this.vehicleModules.radios = []
+            this.vehicleModules.suspensions = []
+            this.vehicleModules.turrets = []
+        }
     },
         
 }

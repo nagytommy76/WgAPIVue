@@ -192,6 +192,7 @@ $modal-background: rgb(28,28,30);
             align-items: center;
             justify-content: center;
             transition: all .4s;
+            cursor: pointer;
             &:hover{
                 background: gray;
             }
