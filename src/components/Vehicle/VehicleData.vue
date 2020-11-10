@@ -30,7 +30,6 @@
             <VehicleModal 
                 v-if="showVehicleModal"
                 @close="showVehicleModal = false"
-                
                 :allVehicles="allVehicles"
                 :vehicleId="selectedVehicleId"
             />
@@ -62,7 +61,7 @@ export default {
         }
     },
     methods: {
-        async openVehicleModal(vehicleID){
+        openVehicleModal(vehicleID){
             this.selectedVehicleId = parseInt(vehicleID)
             this.showVehicleModal = true
         },

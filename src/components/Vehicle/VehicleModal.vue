@@ -55,14 +55,12 @@
     </div>
 </template>
 <script>
-// import axios from 'axios'
 import Vehicle from '../../WGClass/Tankopedia/Vehicle'
 import VehicleDetails from './VehicleDetails/Details'
 import VehicleModules from './VehicleModules/Modules' 
 
 import ModalHeader from './VehicleDetails/ModalHeader'
 import TechTreeItem from './TechTree/TechTreeItem'
-// Átjön az összes jármű, és itt választom ki, hogy melyik id-jű jelenjen meg
 export default {
     name: 'Vehicle Modal',
     components:{
@@ -72,8 +70,6 @@ export default {
         ModalHeader,
     },
     props:{
-        // vehicle: Object,
-        // selectedNation: String,
         vehicleId: Number,
         allVehicles: Object,
     },

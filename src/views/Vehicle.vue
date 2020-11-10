@@ -49,9 +49,11 @@ import Vehicle from '../WGClass/Tankopedia/Vehicle'
 
 import VehicleData from '../components/Vehicle/VehicleData'
 export default {
+    name: 'Vehicle',
     data() {
         return {
             selectedNation: '',
+            tempNation: '',
             selectedType: '',
             selectedTier: 0,
             vehicles: [],
@@ -66,10 +68,18 @@ export default {
         async getVehicles(){
             await Vehicle.getAllVehicles('eu', this.selectedNation, '', '')
             .then(result => {
+                this.vehicles = []
                 for (const value in result.data.data){
-                    this.vehicles.push(result.data.data[value])
+                    if (this.selectedType != '' && this.selectedType == result.data.data[value].type) {
+                        this.vehicles.push(result.data.data[value])
+                    }
                 }
-                this.allVehicles = result.data.data
+                // Probléma: Szeretném szűrni az adott feltételek (heavy, med) szerint a beérkező adatokat
+                // Felesleges többször lekérni
+                if (Object.keys(this.allVehicles).length === 0 || this.tempNation != this.selectedNation) {
+                    this.allVehicles = result.data.data                    
+                    this.tempNation = this.selectedNation
+                }
                 this.showVehicleList = true
             })
         },
