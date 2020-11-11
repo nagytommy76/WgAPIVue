@@ -70,9 +70,25 @@ export default {
             .then(result => {
                 this.vehicles = []
                 for (const value in result.data.data){
-                    if (this.selectedType != '' && this.selectedType == result.data.data[value].type) {
+                    if (this.selectedType == '') {
                         this.vehicles.push(result.data.data[value])
-                    }
+                        // Ha csak a tier 
+                        
+                    }else{
+                        // Ha a ketegória és a tier is be van jelölve
+                        if (this.selectedType == result.data.data[value].type && this.selectedTier == result.data.data[value].tier) {
+                            console.log('bent vok')
+                            this.vehicles.push(result.data.data[value])
+                        }else if(this.selectedType == result.data.data[value].type){
+                            // Ha csak a típus van bejelölve
+                            console.log('csak a típus')
+                            this.vehicles.push(result.data.data[value])
+                        }else if (this.selectedTier == result.data.data[value].tier){
+                            this.vehicles.push(result.data.data[value])
+                            console.log('csak a TIER')
+                        }
+                        // this.vehicles.push(result.data.data[value])
+                    }                    
                 }
                 // Probléma: Szeretném szűrni az adott feltételek (heavy, med) szerint a beérkező adatokat
                 // Felesleges többször lekérni
