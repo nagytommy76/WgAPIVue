@@ -66,36 +66,18 @@ export default {
     },
     methods:{
         async getVehicles(){
-            await Vehicle.getAllVehicles('eu', this.selectedNation, '', '')
-            .then(result => {
-                this.vehicles = []
-                for (const value in result.data.data){
-                    if (this.selectedType == '') {
-                        this.vehicles.push(result.data.data[value])
-                        // Ha csak a tier 
-                        
-                    }else{
-                        // Ha a ketegória és a tier is be van jelölve
-                        if (this.selectedType == result.data.data[value].type && this.selectedTier == result.data.data[value].tier) {
-                            console.log('bent vok')
-                            this.vehicles.push(result.data.data[value])
-                        }else if(this.selectedType == result.data.data[value].type){
-                            // Ha csak a típus van bejelölve
-                            console.log('csak a típus')
-                            this.vehicles.push(result.data.data[value])
-                        }else if (this.selectedTier == result.data.data[value].tier){
-                            this.vehicles.push(result.data.data[value])
-                            console.log('csak a TIER')
-                        }
-                        // this.vehicles.push(result.data.data[value])
-                    }                    
-                }
-                // Probléma: Szeretném szűrni az adott feltételek (heavy, med) szerint a beérkező adatokat
-                // Felesleges többször lekérni
-                if (Object.keys(this.allVehicles).length === 0 || this.tempNation != this.selectedNation) {
-                    this.allVehicles = result.data.data                    
+            // Felesleges többször lekérni
+            if (Object.keys(this.allVehicles).length === 0 || this.tempNation != this.selectedNation) {
+                await Vehicle.getAllVehicles('eu', this.selectedNation, '', '')
+                .then(all => {
+                    this.allVehicles = all.data.data                    
                     this.tempNation = this.selectedNation
-                }
+                })
+            }                 
+            // Lekérem az összes tankot az adott nemzetből
+            await Vehicle.getAllVehicles('eu', this.selectedNation, this.selectedTier, this.selectedType)
+            .then(filteredVehicles => {
+                this.vehicles = filteredVehicles.data.data
                 this.showVehicleList = true
             })
         },

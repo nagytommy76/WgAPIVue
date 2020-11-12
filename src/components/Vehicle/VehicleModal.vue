@@ -8,6 +8,7 @@
                 :vehicleTier="vehicle.tier"
                 :Nation="vehicle.nation"
                 :Type="vehicle.type"
+                :Crew="vehicle.crew"
             />
             <div class="modal-body">
                 <div class="left">
@@ -22,6 +23,9 @@
                         :Characteristics="vehicleCharacteristics"
                     />
                 </div>
+                <CrewSkills 
+                    :crew="vehicle.crew"
+                />
             </div>
             <div class="modal-footer">
                 <div class="tech-tree-row">
@@ -59,7 +63,8 @@ import Vehicle from '../../WGClass/Tankopedia/Vehicle'
 import VehicleDetails from './VehicleDetails/Details'
 import VehicleModules from './VehicleModules/Modules' 
 
-import ModalHeader from './VehicleDetails/ModalHeader'
+import ModalHeader from './VehicleModalComponents/ModalHeader'
+import CrewSkills from './VehicleModalComponents/Crew'
 import TechTreeItem from './TechTree/TechTreeItem'
 export default {
     name: 'Vehicle Modal',
@@ -68,6 +73,7 @@ export default {
         VehicleModules,
         TechTreeItem,
         ModalHeader,
+        CrewSkills,
     },
     props:{
         vehicleId: Number,

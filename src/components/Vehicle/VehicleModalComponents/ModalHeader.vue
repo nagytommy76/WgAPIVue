@@ -20,7 +20,7 @@ export default {
         vehicleName: String,
         vehicleTier: Number,
         Nation: String,
-        Type: String
+        Type: String,
     },
     data() {
         return {

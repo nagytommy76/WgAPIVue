@@ -38,7 +38,7 @@
 </template>
 <script>
 import VehicleModal from './VehicleModal'
-import ListItem from './VehicleListItem'
+import ListItem from './VehicleModalComponents/VehicleListItem'
 
 export default {
     name: 'Vehicle List',
