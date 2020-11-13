@@ -25,6 +25,7 @@
                 </div>
                 <CrewSkills 
                     :crew="vehicle.crew"
+                    :crewNation="vehicle.nation"
                 />
             </div>
             <div class="modal-footer">
@@ -175,20 +176,6 @@ export default {
         async getNextVehicle(){
             let nextTankId = '';
             let previousTankId = ''
-            // if (this.vehicle === undefined) {
-            //     // Ha undefined a tankok akkor, lekérem az egy országhoz tartozó összes tankot (pl ussr) mert ha pl
-            //     // lekérek ussr heavy tankokat és a tech treen van egy td az nincs benne az előzőleg lekért tankokban!
-            //     // Esetleges megoldás: 
-            //     // Ha megnyitom ezt a modalt akkor lekérem az összes egy nemzethez tartozó tankot, így elvileg megoldva!!!!
-            //     // await Vehicle.getAllVehicles('eu', this.selectedNation, 0, '', '', this.selectedVehicleId)
-            //     // .then(result => {
-
-            //     // })
-            //     await axios.get(`https://api.worldoftanks.eu/wot/encyclopedia/vehicles/?application_id=1ebc47797ed02032c3c5489cbba60f6c&nation=${this.selectedNation}`)
-            //     .then(result =>{
-            //         this.vehicle = result.data.data
-            //     })
-            // }
             // Ha nincs utána tank, tehát pl T9-es
             if (this.vehicle.next_tanks === null) {
                 if(this.vehicle.prices_xp !== null){
