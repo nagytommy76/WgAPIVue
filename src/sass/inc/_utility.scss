@@ -36,21 +36,25 @@ li{
     position: relative;
     display: inline-block;
     &-text{
-        visibility: hidden;
-        transition: visibility .3s;
+        opacity: 0;
+        transition: opacity .5s;
         position: absolute;
-        z-index: 1;
-        width: 120px;
+        z-index: 999;
+        width: 250px;
         bottom: 100%;
         left: 50%;
-        background-color: black;
+        background-color: #222;
+        box-shadow: 1px 1px 10px #333;
         color: #FFF;
         text-align: center;
-        padding: .5rem 0;
+        padding: .7rem .5rem;
         border-radius: 6px;
         margin-left: -60px;
+        p{
+            text-align: justify;
+        }
     }
     &:hover .tooltip-text{
-        visibility: visible;
+        opacity: 1;
     }
 }
