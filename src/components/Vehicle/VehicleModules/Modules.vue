@@ -1,4 +1,5 @@
 <template>
+<div class="left">
     <div class="modules-table">
         <div class="modules-table-row">
             <ModuleType 
@@ -36,6 +37,7 @@
             />
         </div>
     </div>
+</div>
 </template>
 <script>
 import ModuleType from './ModuleTypes/ModuleType'

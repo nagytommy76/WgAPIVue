@@ -37,7 +37,7 @@
             </div>
             </div>
         </section>
-        <VehicleData
+        <VehicleList
             v-if="showVehicleList"
             :vehicles="vehicles"
             :allVehicles="allVehicles"
@@ -47,7 +47,7 @@
 <script>
 import Vehicle from '../WGClass/Tankopedia/Vehicle'
 
-import VehicleData from '../components/Vehicle/VehicleData'
+import VehicleList from '../components/Vehicle/VehicleList'
 export default {
     name: 'Vehicle',
     data() {
@@ -62,7 +62,7 @@ export default {
         }
     },
     components:{
-        VehicleData,
+        VehicleList,
     },
     methods:{
         async getVehicles(){

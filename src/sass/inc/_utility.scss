@@ -36,25 +36,29 @@ li{
     position: relative;
     display: inline-block;
     &-text{
+        // display: none;
         opacity: 0;
-        transition: opacity .5s;
+        visibility: hidden;
+        -webkit-transition: opacity .4s, visibility .4s;
+        transition: opacity .4s, visibility .4s;
         position: absolute;
         z-index: 999;
         width: 250px;
-        bottom: 100%;
-        left: 50%;
+        bottom: -50%;
+        left: 60%;
         background-color: #222;
         box-shadow: 1px 1px 10px #333;
         color: #FFF;
-        text-align: center;
+        text-align: justify;
         padding: .7rem .5rem;
         border-radius: 6px;
-        margin-left: -60px;
+        margin-left: 20px;
         p{
             text-align: justify;
         }
     }
     &:hover .tooltip-text{
         opacity: 1;
+        visibility: visible;
     }
 }

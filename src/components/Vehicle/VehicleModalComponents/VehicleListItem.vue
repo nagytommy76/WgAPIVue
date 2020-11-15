@@ -1,4 +1,5 @@
 <template>
+<div class="tooltip">
     <div class="table-view-body-row modal-open">
         <div class="table-view-body-row-col full-size">
             <span class="vehicle-contour-icon">
@@ -24,9 +25,16 @@
             {{ weight }} T
         </div>
     </div>
+    <div class="tooltip-text">
+        <span>semmi</span>
+    </div>
+</div>
 </template>
 <script>
 export default {
+    // Ide szeretnék egy tooltip-et ami a win rate-et jeleníti meg akkor, ha be vagyok lépve és a tank a garázsban van
+    // ha nincs a garázsban nem jelenik meg
+    // majd egy gomb megnyomásával megnyitok egy újabb modal-t ahová az adott tankkal elért achivementek kerülnek
     name: 'Vehicle List Item',
     props: {
         contourIcon: String,

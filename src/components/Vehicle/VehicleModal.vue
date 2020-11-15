@@ -11,18 +11,14 @@
                 :Crew="vehicle.crew"
             />
             <div class="modal-body">
-                <div class="left">
-                    <VehicleModules 
-                        v-if="showModules"
-                        :modules="vehicleModules"
-                    />
-                </div>
-                <div class="right">
-                    <VehicleDetails 
-                        v-if="showCharacteristics"
-                        :Characteristics="vehicleCharacteristics"
-                    />
-                </div>
+                <VehicleModules 
+                    v-if="showModules"
+                    :modules="vehicleModules"
+                />
+                <VehicleDetails 
+                    v-if="showCharacteristics"
+                    :Characteristics="vehicleCharacteristics"
+                />
                 <CrewSkills 
                     :crew="vehicle.crew"
                     :crewNation="vehicle.nation"

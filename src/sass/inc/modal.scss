@@ -65,8 +65,8 @@ $modal-background: rgb(28,28,30);
         color: white;
         border-radius: 15px;
         box-shadow: 1px 1px 20px black;
-        width: 80%;
-        height: 80%;
+        min-width: 1200px;
+        height: 90%;
         display: grid;
         grid-template-rows: 12% 65% 23%;
 
@@ -118,24 +118,46 @@ $modal-background: rgb(28,28,30);
                         position: relative;
                         display: inline-block;
                         &-text{
+                            .role-names{
+                                text-align: center;
+                                margin-bottom: 1.2rem;
+                                border-bottom: 1px solid rgba($color: #00FF17, $alpha: .4);
+                                padding: .5rem;
+                                font-size: 1.2rem;
+                            }
+                            visibility: hidden;
                             opacity: 0;
-                            transition: opacity .5s;
+                            -webkit-transition: opacity .4s, visibility .4s;
+                            transition: opacity .4s, visibility .4s;
                             position: absolute;
-                            z-index: 1;
-                            width: 170px;
-                            bottom: 100%;
-                            left: 50%;
+                            z-index: 999;
+                            width: 185px;
+                            bottom: 0px;
+                            left: 0px;
                             background-color: #222;
                             box-shadow: 1px 1px 10px #333;
                             color: #FFF;
-                            text-align: center;
                             padding: .7rem .5rem;
                             border-radius: 6px;
-                            margin-left: -60px;
+                            margin-left: 0px;
+                            .crew-qualification{
+                                width: 100%;
+                                min-height: 67px;
+                                display: flex;
+                                align-items: center;
+                                &-icon{
+                                    margin-right: 2rem;
+                                }
+                                &-name{
+                                    width: 100%;
+                                    text-align: left;
+                                }
+                            }
                         }
-                        &:hover .crew-tooltip-text{
-                            opacity: 1;
-                        }
+                    }
+                    &:hover .crew-tooltip-text{
+                        visibility: visible;
+                        opacity: 1;
                     }
                     .crew-image{
                         &:hover{
@@ -174,7 +196,7 @@ $modal-background: rgb(28,28,30);
 }
 
 .specification{
-    height: 100%;
+    min-height: 100%;
     width: 100%;
     display: grid;
     grid-template-rows: repeat(2, 1fr);

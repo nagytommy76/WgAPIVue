@@ -20,7 +20,7 @@
                     :gunAimTime="vehicle.default_profile.gun.aim_time"
                     :gunDispersion="vehicle.default_profile.gun.dispersion"
                     :weight="vehicle.default_profile.weight"
-                />
+                />                  
             </div>
         </div>
         <transition name="fade" appear>
@@ -40,6 +40,7 @@
 import VehicleModal from './VehicleModal'
 import ListItem from './VehicleModalComponents/VehicleListItem'
 
+import axios from 'axios'
 export default {
     name: 'Vehicle List',
     props: {
@@ -65,6 +66,12 @@ export default {
             this.selectedVehicleId = parseInt(vehicleID)
             this.showVehicleModal = true
         },
+        async loadPlayerStat(){
+            await axios.get(`https://api.worldoftanks.eu/wot/account/tanks/?application_id=1ebc47797ed02032c3c5489cbba60f6c&tank_id=${this.Characteristics.tank_id}&account_id=${this.account_id}`)
+            .then(stat =>{
+                this.playersVehicleStat = stat.data.data
+            })
+        }
     },
 }
 </script>

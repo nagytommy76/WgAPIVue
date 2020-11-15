@@ -1,4 +1,5 @@
 <template>
+<div class="right">
     <div class="specification">
         <div class="specification-row">
             <FirepowerBlock 
@@ -17,6 +18,7 @@
             />
         </div>
     </div>
+</div>
 </template>
 <script>
 import SurvivabilityBlock from './SurvivabilityBlock'
