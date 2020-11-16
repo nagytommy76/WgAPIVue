@@ -8,14 +8,9 @@
 </template>
 <script>
 export default {
+    name: 'Tooltip',
     props:{
-        text: String
-    },
-    created() {
-        console.log('?????????????????')
-    },
-    mounted() {
-        console.log(this.$slots)
+        text: String,
     },
 }
 </script>

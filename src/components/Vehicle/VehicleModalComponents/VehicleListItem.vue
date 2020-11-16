@@ -1,6 +1,6 @@
 <template>
-<div class="tooltip">
     <div class="table-view-body-row modal-open">
+        <div class="tooltip">
         <div class="table-view-body-row-col full-size">
             <span class="vehicle-contour-icon">
                 <img :src="contourIcon" />
@@ -8,6 +8,11 @@
             <p class="vehicle-name">
                 {{ vehicleName }}
             </p>
+           <div class="tooltip-text">
+                <span>semmi</span>
+                <button @click="test()">TESZT</button>
+            </div>
+        </div>
         </div>
         <div class="table-view-body-row-col flex-centered">
             {{ VehicleTier }}
@@ -25,10 +30,6 @@
             {{ weight }} T
         </div>
     </div>
-    <div class="tooltip-text">
-        <span>semmi</span>
-    </div>
-</div>
 </template>
 <script>
 export default {
@@ -44,6 +45,11 @@ export default {
         gunAimTime: Number,
         gunDispersion: Number,
         weight: Number
+    },
+    methods:{
+        test(){
+            console.log('cvsá')
+        }
     }
 }
 </script>
