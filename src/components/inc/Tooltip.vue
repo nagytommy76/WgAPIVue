@@ -3,6 +3,7 @@
             <slot></slot>            
         <div class="tooltip-text">
             <span>{{ text }}</span>
+            <slot name="optional"></slot>
         </div>
     </div>
 </template>
