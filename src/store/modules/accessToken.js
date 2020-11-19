@@ -2,7 +2,7 @@ export default{
     state: {
         Token: {
             accessToken: '',
-            account_id: '',
+            account_id: null,
             expires_at: 0,
             nickname: '',
         },
