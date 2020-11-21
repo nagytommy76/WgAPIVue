@@ -66,7 +66,7 @@ export default {
             tempNation: '',
             selectedType: '',
             selectedTier: 0,
-            vehicles: [],
+            vehicles: {},
             allVehicles: {},
             showVehicleList: false,
 
@@ -84,9 +84,7 @@ export default {
     },
     methods:{
         async getVehicles(){
-        // megoldani, hogy ezek nélkül menjen, ha lehet.... 
-            this.vehicles = {}
-            this.showVehicleList = false
+            // this.vehicles = {}
             // Lekérem az összes tankot az adott nemzetből
             await Vehicle.getAllVehicles('eu', this.selectedNation, this.selectedTier, this.selectedType)
             .then(filteredVehicles => {

@@ -31,9 +31,15 @@ $col-width: 7rem;
                 width: $col-width;
                 
                 .vehicle-name{
-                    max-width: 100%;
+                    // max-width: 70%;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                }
+                // ha tooltip van akkor vízszintesen 1 sorban legyen
+                .tooltip{
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
                 }
             }
 

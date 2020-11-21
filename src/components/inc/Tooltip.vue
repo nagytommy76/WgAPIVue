@@ -1,6 +1,6 @@
 <template>
     <div class="tooltip">
-            <slot></slot>            
+            <slot name="main"></slot>            
         <div class="tooltip-text">
             <span>{{ text }}</span>
             <slot name="optional"></slot>
@@ -11,7 +11,10 @@
 export default {
     name: 'Tooltip',
     props:{
-        text: String,
+        text: {
+            type: String,
+            required: false
+        },
     },
 }
 </script>

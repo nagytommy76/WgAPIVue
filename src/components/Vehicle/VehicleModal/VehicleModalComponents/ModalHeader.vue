@@ -12,7 +12,7 @@
     </div>
 </template>
 <script>
-import Vehicle from '../../../WGClass/Tankopedia/Vehicle'
+import Vehicle from '../../../../WGClass/Tankopedia/Vehicle'
 export default {
     name: 'ModalHeader',
     props:{

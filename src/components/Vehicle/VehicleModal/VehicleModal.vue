@@ -56,7 +56,7 @@
     </div>
 </template>
 <script>
-import Vehicle from '../../WGClass/Tankopedia/Vehicle'
+import Vehicle from '../../../WGClass/Tankopedia/Vehicle'
 import VehicleDetails from './VehicleDetails/Details'
 import VehicleModules from './VehicleModules/Modules' 
 

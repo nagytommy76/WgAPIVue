@@ -12,7 +12,7 @@
             <div class="table-view-body">
                 <ListItem 
                     v-for="vehicle in vehicles" :key="vehicle.tank_id"  
-                    @click="openVehicleModal(vehicle.tank_id, $event)"
+                    @click="openVehicleModalOrPlayerStat(vehicle.tank_id, $event)"
                     :contourIcon="vehicle.images.contour_icon"
                     :vehicleName="vehicle.name"
                     :VehicleTier="vehicle.tier"
@@ -21,6 +21,7 @@
                     :gunDispersion="vehicle.default_profile.gun.dispersion"
                     :weight="vehicle.default_profile.weight"
                     :playerStatWithVehicle="playersVehicleStat[vehicle.tank_id]"
+                    :tankId="vehicle.tank_id"
                 />                 
             </div>
         </div>
@@ -38,8 +39,9 @@
     </section>
 </template>
 <script>
-import VehicleModal from './VehicleModal'
-import ListItem from './VehicleModalComponents/VehicleListItem'
+import VehicleModal from './VehicleModal/VehicleModal'
+import ListItem from './VehicleModal/VehicleModalComponents/VehicleListItem'
+
 export default {
     name: 'Vehicle List',
     props: {
@@ -54,14 +56,15 @@ export default {
     data() {
         return {
             showVehicleModal : false,
+
             selectedVehicle: this.vehicles.data,
             selectedVehicleId: 0,
         }
     },
     methods: {
-        openVehicleModal(vehicleID, event){
+        openVehicleModalOrPlayerStat(vehicleID, event){
             this.selectedVehicleId = parseInt(vehicleID)
-            if (event.target.parentElement.className != 'tooltip-text' && event.target.className !== 'tooltip-text') {
+            if (!event.target.classList.value.includes('player-stat') && event.target.className !== 'btn btn-primary') {
                 this.showVehicleModal = true 
             }
         },
