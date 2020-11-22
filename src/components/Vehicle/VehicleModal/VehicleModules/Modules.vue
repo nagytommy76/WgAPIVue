@@ -57,23 +57,23 @@ export default {
             switch(moduleType){
                 case 'vehicleEngine' : 
                     this.$parent.selectedVehicleModulesId.engine_id = module_id
-                    this.$parent.getTankCharacteristics()
+                    this.$parent.getTankCharacteristics(module_id, moduleType)
                     break
                 case 'vehicleGun':
                     this.$parent.selectedVehicleModulesId.gun_id = module_id
-                    this.$parent.getTankCharacteristics()
+                    this.$parent.getTankCharacteristics(module_id, moduleType)
                     break
                 case 'vehicleRadio' :
                     this.$parent.selectedVehicleModulesId.radio_id = module_id
-                    this.$parent.getTankCharacteristics()
+                    this.$parent.getTankCharacteristics(module_id,moduleType)
                     break
                 case 'vehicleChassis' :
                     this.$parent.selectedVehicleModulesId.suspension_id = module_id
-                    this.$parent.getTankCharacteristics()
+                    this.$parent.getTankCharacteristics(module_id,moduleType)
                     break
                 case 'vehicleTurret' :
                     this.$parent.selectedVehicleModulesId.turret_id = module_id
-                    this.$parent.getTankCharacteristics()
+                    this.$parent.getTankCharacteristics(module_id,moduleType)
                     break
             }
         }

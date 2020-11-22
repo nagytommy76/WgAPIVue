@@ -3,13 +3,12 @@
         <section class="vehicleSearch">
             <div class="card card-dark">
             <h1 class="card-title">Searching Vehicles</h1>
+            <h5><sup>*</sup> Please select a nation and a type</h5>
             <div class="card-form">
                 <div class="form-group">
                     <label for="tank_nation">
                         Vehicle Nation </label>
-                        <select 
-                        @change="getVehicles()"
-                        v-model="selectedNation" class="form-control" name="tank_nation" id="tank_nation">
+                        <select v-model="selectedNation" class="form-control" name="tank_nation" id="tank_nation">
                             <option value="">None</option>
                             <option value="ussr">USSR</option>
                             <option value="usa">USA</option>
@@ -24,9 +23,7 @@
                             <option value="china">China</option>
                         </select>
                     <label for="tank_name">Vehicle Type</label>
-                    <select 
-                    @change="getVehicles()"
-                    class="form-control" v-model="selectedType" name="tank_type" id="tank_type">
+                    <select class="form-control" v-model="selectedType" name="tank_type" id="tank_type">
                         <option value="">None</option>
                         <option value="heavyTank">Heavy Tank</option>
                         <option value="mediumTank">Medium Tank</option>
@@ -34,11 +31,11 @@
                         <option value="AT-SPG">Tank Destroyer</option>
                         <option value="SPG">Artilery (SPG)</option>
                     </select>
-
                     <label for="tier">Vehicle Tier (1-10)</label>
-                    <input 
-                    @change="getVehicles()" 
-                    v-model="selectedTier" class="form-control" type="number" name="tier" id="tier" min="1" max="10">
+                    <input v-model="selectedTier" class="form-control" type="number" name="tier" id="tier" min="1" max="10">
+                    <div class="form-control">
+                        <div class="btn btn-primary" @click="getVehicles()" v-if="selectedNation != '' && selectedType != ''">Search</div>
+                    </div>
                 </div>
             </div>
             </div>
@@ -65,13 +62,12 @@ export default {
             selectedNation: '',
             tempNation: '',
             selectedType: '',
-            selectedTier: 0,
+            selectedTier: '',
             vehicles: {},
             allVehicles: {},
             showVehicleList: false,
 
             playersVehicleStat: {},
-            // vehicleIDs: '',
         }
     },
     components:{
@@ -84,16 +80,16 @@ export default {
     },
     methods:{
         async getVehicles(){
-            // this.vehicles = {}
-            // Lekérem az összes tankot az adott nemzetből
+            // Lekérem a keresett tankokat
             await Vehicle.getAllVehicles('eu', this.selectedNation, this.selectedTier, this.selectedType)
             .then(filteredVehicles => {
                 this.vehicles = filteredVehicles.data.data              
             })
 
-            // Felesleges többször lekérni
+            // Felesleges többször lekérni, az összes tankot. Nation és Type alapján az összes
+            // Le kell kérni az adott nemzethez tartozó össze stankot mert a techTree-nél lehet, hogy heavy után pl TD jön
             if (Object.keys(this.allVehicles).length === 0 || this.tempNation != this.selectedNation) {
-                await Vehicle.getAllVehicles('eu', this.selectedNation, '', '')
+                await Vehicle.getAllVehicles('eu', this.selectedNation)
                 .then(all => {
                     this.allVehicles = all.data.data                    
                     this.tempNation = this.selectedNation
@@ -101,25 +97,27 @@ export default {
             }  
             
             if(this.account_id != null){
-                await axios.get(`https://api.worldoftanks.eu/wot/account/tanks/?application_id=1ebc47797ed02032c3c5489cbba60f6c&tank_id=${this.createVehicleIdString()}&account_id=${this.account_id}`)
-                .then(stat =>{
-                    if (stat.data.status !== 'error') {
-                        this.getInfo(stat.data.data[this.account_id])                    
+                await axios.get(`https://api.worldoftanks.eu/wot/tanks/stats/?application_id=1ebc47797ed02032c3c5489cbba60f6c&account_id=${this.account_id}&tank_id=${this.createVehicleIdsArray()}&fields=all,max_xp,in_garage,max_frags,mark_of_mastery,tank_id`).then(playerStat =>{
+                    // Ha nincs error és van statisztika a tankokkal
+                    if (playerStat.data.status !== 'error' && playerStat.data.data[this.account_id] !== null) {
+                        this.getInfo(playerStat.data.data[this.account_id])                    
                     }
                 })
             }
             this.showVehicleList = true 
         },
+        // Az elemek key a tank_id legyen
         getInfo(playerStat){
             this.playersVehicleStat = {}
             playerStat.forEach((item) =>{
                 this.playersVehicleStat[item.tank_id] = item
             })
         },
-        createVehicleIdString(){
-            let stringIDs = ''
+        // Az összes talált tank id-jét visszaküldöm
+        createVehicleIdsArray(){
+            let stringIDs = []
             for (const key in this.vehicles) {
-                stringIDs += `${key},`
+                stringIDs.push(key)
             }
             return stringIDs
         },

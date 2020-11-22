@@ -1,14 +1,7 @@
 <template>
     <section class="vehicle-data">
         <div class="table-view">
-            <div class="table-view-header">
-                <div class="table-view-header-row full-size">Vehicle Name</div>
-                <div class="table-view-header-row flex-centered">Vehicle Tier</div>
-                <div class="table-view-header-row flex-centered">Hit Points</div>
-                <div class="table-view-header-row flex-centered">Aim Time</div>
-                <div class="table-view-header-row flex-centered">Dispersion</div>
-                <div class="table-view-header-row flex-centered">Weight</div>
-            </div>
+            <TableHeader />
             <div class="table-view-body">
                 <ListItem 
                     v-for="vehicle in vehicles" :key="vehicle.tank_id"  
@@ -40,7 +33,8 @@
 </template>
 <script>
 import VehicleModal from './VehicleModal/VehicleModal'
-import ListItem from './VehicleModal/VehicleModalComponents/VehicleListItem'
+import ListItem from './VehicleList/VehicleListItem'
+import TableHeader from './VehicleList/VehicleTableHeader'
 
 export default {
     name: 'Vehicle List',
@@ -52,12 +46,12 @@ export default {
     components:{
         VehicleModal,
         ListItem,
+        TableHeader,
     },
     data() {
         return {
             showVehicleModal : false,
-
-            selectedVehicle: this.vehicles.data,
+            // selectedVehicle: this.vehicles.data,
             selectedVehicleId: 0,
         }
     },
