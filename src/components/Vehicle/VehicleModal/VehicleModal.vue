@@ -63,6 +63,7 @@ import VehicleModules from './VehicleModules/Modules'
 import ModalHeader from './VehicleModalComponents/ModalHeader'
 import CrewSkills from './VehicleModalComponents/Crew'
 import TechTreeItem from './TechTree/TechTreeItem'
+import Axios from 'axios'
 export default {
     name: 'Vehicle Modal',
     components:{
@@ -131,7 +132,6 @@ export default {
         this.fillSelectedModulesId()
         this.getNextVehicle()
         this.getTankCharacteristics()
-        // this.test()
     },
     methods:{
         // Ezek az alap (STOCK) modulok
@@ -144,10 +144,8 @@ export default {
             this.selectedVehicleModulesId.turret_id = this.vehicle.default_profile.modules.turret_id == null ? '' : this.vehicle.default_profile.modules.turret_id
         },
         async getTankCharacteristics(module_id = '', module_type = ''){
-            let characteristics = {}
-            await this.test().then(characteristic => {
-                characteristics = characteristic.data
-                // console.log(characteristics)
+            const characteristics = await this.returnVehicleCharacteristics().then(characteristic => {
+                return characteristic.data
             })
             if(characteristics.status != 'error'){
                 this.vehicleCharacteristics = characteristics.data[this.vehicle.tank_id]
@@ -155,28 +153,49 @@ export default {
             }else{
                 // ide akkor lépünk be ha error van és a megelőző modult kell kiválasztani
                 // MEGOLDANI: Ha hibát dob az előző modult is ki kell választani, illetve ha túlterhelés van.
-                console.log('hiba')
-                console.log(module_id)
-                console.log(module_type)
-                console.log(characteristics)
+
+                // 2 eset lehet: 
+                // 1. Ki kéne számolni, hogy az adott modult elbírja-e a lánc, ha nem fel kell rakni 
+               await Axios.get(`https://api.worldoftanks.eu/wot/encyclopedia/modules/?application_id=1ebc47797ed02032c3c5489cbba60f6c&module_id=${module_id}&type=${module_type}&fields=weight`)
+                .then(result => {
+                    const weight = ((this.vehicleCharacteristics.weight - this.vehicleCharacteristics[this.getTest(module_type)].weight) + result.data.data[module_id].weight)
+
+                    // nehezebb a modul mint a lánc teherbírása
+                    if(weight > this.vehicleCharacteristics.suspension.load_limit){
+                        this.selectedVehicleModulesId.suspension_id = this.vehicleModules.suspensions[1].module_id
+                        this.returnVehicleCharacteristics().then(withSuspension => {
+                            if(withSuspension.status != 'error'){
+                                // console.log(withSuspension.data.data[this.vehicleId])
+                                this.vehicleCharacteristics = withSuspension.data.data[this.vehicleId]
+                            }
+                        })
+                    }
+                    // megvan, hogy a súly a gond
+                })
+                // 2. Van olyan eset amikor az előző modult kell feltenni. PL.: előbb egy turrret-et kell felrakni, aztán gun
             }
-            // await Vehicle.getVehicleCharacteristics(this.vehicle.tank_id, this.selectedVehicleModulesId)
-            // .then(characteristics => {
-                // Hiba, ha nem a következő kompatibilis modul lesz kiválsztva a server 404 "invalid module ids" errort dob
-                // if(characteristics.data.status != 'error'){
-                //     this.vehicleCharacteristics = characteristics.data.data[this.vehicle.tank_id]
-                //     this.showCharacteristics = true
-                //     // console.log(characteristics.data.data)
-                // }else{
-                //     // ide akkor lépünk be ha error van és a megelőző modult kell kiválasztani
-                //     console.log('hiba')
-                //     // console.log(characteristics.data)
-                // }
-            // })
         },
-        async test(){
+        async returnVehicleCharacteristics(){
             return await Vehicle.getVehicleCharacteristics(this.vehicle.tank_id, this.selectedVehicleModulesId)
         },
+        getTest(module_type){
+            let test = ''
+            switch (module_type) {
+                case 'vehicleTurret':
+                    test = 'turret'
+                    break
+                case 'vehicleRadio':
+                    test = 'radio'
+                    break
+                case 'vehicleGun':
+                    test = 'gun'
+                    break
+                case 'vehicleEngine':
+                    test = 'engine'
+                    break
+            }
+            return test
+        }, 
         async getVehicleModules(setArrayDefault = false){
             if(setArrayDefault){
                 this.setModuleArrayToDefault()

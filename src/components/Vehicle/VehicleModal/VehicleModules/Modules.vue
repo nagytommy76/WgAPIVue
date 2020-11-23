@@ -47,11 +47,6 @@ export default {
     components:{
         ModuleType,
     },
-    data() {
-        return {
-            selectedEngine: '',
-        }
-    },
     methods: {
         changeSelectedModules(module_id, moduleType){
             switch(moduleType){
