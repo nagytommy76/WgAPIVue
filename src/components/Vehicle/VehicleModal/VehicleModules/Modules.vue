@@ -53,6 +53,11 @@ export default {
                 case 'vehicleEngine' : 
                     this.$parent.selectedVehicleModulesId.engine_id = module_id
                     this.$parent.getTankCharacteristics(module_id, moduleType)
+                    // Ennek vissz kellene küldeni egy BOOL-t, hogy sikerült, aztán meghívni
+                    // if(this.$parent.getTankCharacteristics(module_id, moduleType) === true)
+                    // { 
+                        // this.$parent.selectedVehicleModulesId.engine_id = module_id
+                    // }
                     break
                 case 'vehicleGun':
                     this.$parent.selectedVehicleModulesId.gun_id = module_id

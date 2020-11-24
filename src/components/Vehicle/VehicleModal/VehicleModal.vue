@@ -162,6 +162,7 @@ export default {
 
                     // nehezebb a modul mint a lánc teherbírása
                     if(weight > this.vehicleCharacteristics.suspension.load_limit){
+                        // megvan, hogy a súly a gond
                         this.selectedVehicleModulesId.suspension_id = this.vehicleModules.suspensions[1].module_id
                         this.returnVehicleCharacteristics().then(withSuspension => {
                             if(withSuspension.status != 'error'){
@@ -170,9 +171,12 @@ export default {
                             }
                         })
                     }
-                    // megvan, hogy a súly a gond
+                    // Hibák: 
+                    // 1. Ezt visszafele is meg kell csinálni, ha aktív a lánc és visszateszem a default-ot
+                    // 2. a check icon csak akkor legyen aktív, ha valóban megtörtént a váltás
                 })
                 // 2. Van olyan eset amikor az előző modult kell feltenni. PL.: előbb egy turrret-et kell felrakni, aztán gun
+
             }
         },
         async returnVehicleCharacteristics(){
