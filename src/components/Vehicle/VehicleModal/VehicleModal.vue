@@ -175,6 +175,7 @@ export default {
                     // 1. Ezt visszafele is meg kell csinálni, ha aktív a lánc és visszateszem a default-ot
                     // 2. a check icon csak akkor legyen aktív, ha valóban megtörtént a váltás
                 })
+                console.log('itt vok?')
                 // 2. Van olyan eset amikor az előző modult kell feltenni. PL.: előbb egy turrret-et kell felrakni, aztán gun
 
             }

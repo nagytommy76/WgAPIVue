@@ -60,8 +60,10 @@ export default {
                     // }
                     break
                 case 'vehicleGun':
-                    this.$parent.selectedVehicleModulesId.gun_id = module_id
+                    this.$parent.selectedVehicleModulesId.gun_id = module_id                        
                     this.$parent.getTankCharacteristics(module_id, moduleType)
+                        console.log('csá')
+                    
                     break
                 case 'vehicleRadio' :
                     this.$parent.selectedVehicleModulesId.radio_id = module_id
@@ -72,8 +74,10 @@ export default {
                     this.$parent.getTankCharacteristics(module_id,moduleType)
                     break
                 case 'vehicleTurret' :
-                    this.$parent.selectedVehicleModulesId.turret_id = module_id
-                    this.$parent.getTankCharacteristics(module_id,moduleType)
+                    if(this.$parent.getTankCharacteristics(module_id,moduleType)){                        
+                        this.$parent.selectedVehicleModulesId.turret_id = module_id
+                        console.log('csá222')
+                    }
                     break
             }
         }
