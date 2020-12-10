@@ -62,7 +62,7 @@ export default {
                 case 'vehicleGun':
                     this.$parent.selectedVehicleModulesId.gun_id = module_id                        
                     this.$parent.getTankCharacteristics(module_id, moduleType)
-                        console.log('csá')
+                        // console.log('csá')
                     
                     break
                 case 'vehicleRadio' :
@@ -76,7 +76,7 @@ export default {
                 case 'vehicleTurret' :
                     if(this.$parent.getTankCharacteristics(module_id,moduleType)){                        
                         this.$parent.selectedVehicleModulesId.turret_id = module_id
-                        console.log('csá222')
+                        // console.log('csá222')
                     }
                     break
             }

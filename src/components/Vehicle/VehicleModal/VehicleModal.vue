@@ -131,7 +131,7 @@ export default {
         this.getVehicleModules()
         this.fillSelectedModulesId()
         this.getNextVehicle()
-        this.getTankCharacteristics()
+        this.getTankCharacteristicsFirsTime()
     },
     methods:{
         // Ezek az alap (STOCK) modulok
@@ -142,6 +142,15 @@ export default {
             this.selectedVehicleModulesId.suspension_id = this.vehicle.default_profile.modules.suspension_id
             // Megoldva: ha pl nincs turret akkor null lesz a turret_id és így nem tudja lekérni a vehicle characteristics-et
             this.selectedVehicleModulesId.turret_id = this.vehicle.default_profile.modules.turret_id == null ? '' : this.vehicle.default_profile.modules.turret_id
+        },
+        async getTankCharacteristicsFirsTime(){
+            const characteristics = await this.returnVehicleCharacteristics().then(characteristic => {
+                return characteristic.data
+            })
+            if(characteristics.status != 'error'){
+                this.vehicleCharacteristics = characteristics.data[this.vehicle.tank_id]
+                this.showCharacteristics = true
+            }
         },
         async getTankCharacteristics(module_id = '', module_type = ''){
             const characteristics = await this.returnVehicleCharacteristics().then(characteristic => {
@@ -156,12 +165,16 @@ export default {
 
                 // 2 eset lehet: 
                 // 1. Ki kéne számolni, hogy az adott modult elbírja-e a lánc, ha nem fel kell rakni 
+                if (this.vehicleModules.suspensions[1].module_id !== this.vehicleCharacteristics.modules.suspension_id) {
+                    console.log('csak akkor vAGYOK itt ha nincs kihúzva a lánc és úgy nem jó a modul')
+                }
                await Axios.get(`https://api.worldoftanks.eu/wot/encyclopedia/modules/?application_id=1ebc47797ed02032c3c5489cbba60f6c&module_id=${module_id}&type=${module_type}&fields=weight`)
                 .then(result => {
                     const weight = ((this.vehicleCharacteristics.weight - this.vehicleCharacteristics[this.getTest(module_type)].weight) + result.data.data[module_id].weight)
-
+                    console.log(weight < this.vehicleCharacteristics.suspension.load_limit)
+                    console.log(weight)
                     // nehezebb a modul mint a lánc teherbírása
-                    if(weight > this.vehicleCharacteristics.suspension.load_limit){
+                    if(weight < this.vehicleCharacteristics.suspension.load_limit){
                         // megvan, hogy a súly a gond
                         this.selectedVehicleModulesId.suspension_id = this.vehicleModules.suspensions[1].module_id
                         this.returnVehicleCharacteristics().then(withSuspension => {
@@ -170,12 +183,15 @@ export default {
                                 this.vehicleCharacteristics = withSuspension.data.data[this.vehicleId]
                             }
                         })
+                    }else{
+                        console.log('Ki kell választani az előző modult, és ha szintén az nehezebb mint a terhelési limit, feltenni a nagyobb láncot')
+                        
                     }
                     // Hibák: 
                     // 1. Ezt visszafele is meg kell csinálni, ha aktív a lánc és visszateszem a default-ot
                     // 2. a check icon csak akkor legyen aktív, ha valóban megtörtént a váltás
+                // console.log('itt vok?')
                 })
-                console.log('itt vok?')
                 // 2. Van olyan eset amikor az előző modult kell feltenni. PL.: előbb egy turrret-et kell felrakni, aztán gun
 
             }
