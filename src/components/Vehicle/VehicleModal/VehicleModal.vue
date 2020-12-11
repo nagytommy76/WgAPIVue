@@ -63,7 +63,7 @@ import VehicleModules from './VehicleModules/Modules'
 import ModalHeader from './VehicleModalComponents/ModalHeader'
 import CrewSkills from './VehicleModalComponents/Crew'
 import TechTreeItem from './TechTree/TechTreeItem'
-import Axios from 'axios'
+// import Axios from 'axios'
 export default {
     name: 'Vehicle Modal',
     components:{
@@ -166,15 +166,25 @@ export default {
                 // 2 eset lehet: 
                 // 1. Ki kéne számolni, hogy az adott modult elbírja-e a lánc, ha nem fel kell rakni 
                 if (this.vehicleModules.suspensions[1].module_id !== this.vehicleCharacteristics.modules.suspension_id) {
-                    console.log('csak akkor vAGYOK itt ha nincs kihúzva a lánc és úgy nem jó a modul')
-                }
-               await Axios.get(`https://api.worldoftanks.eu/wot/encyclopedia/modules/?application_id=1ebc47797ed02032c3c5489cbba60f6c&module_id=${module_id}&type=${module_type}&fields=weight`)
-                .then(result => {
-                    const weight = ((this.vehicleCharacteristics.weight - this.vehicleCharacteristics[this.getTest(module_type)].weight) + result.data.data[module_id].weight)
-                    console.log(weight < this.vehicleCharacteristics.suspension.load_limit)
+                    console.log('csak akkor vAGYOK itt ha nincs kihúzva a lánc, tehát be kell lépni. Magyarul alap lánc van fent')
+                    console.log('Meg kell vizsgálni, hogy a kiválasztott modult elbírja-e az alap lánc, ha nem: ')
+                    console.log('Fel kell tenni a másikat (lánc)')
+                    console.log('ha elbírja: meg kell nézni, hogy van-e előtte olyan modul amit fel kell tenni pl torony')
+                // await Axios.get(`https://api.worldoftanks.eu/wot/encyclopedia/modules/?application_id=1ebc47797ed02032c3c5489cbba60f6c&module_id=${module_id}&type=${module_type}&fields=weight`)
+                // .then(result => {
+                    const weight = ((this.vehicleCharacteristics.weight - this.vehicleCharacteristics[this.getTest(module_type)].weight) + this.vehicleModules[`${this.getTest(module_type)}s`].find((object) => {
+                        return object.module_id === module_id;
+                    }).weight)
+
+                    // Megoldani, hogy a vehicle modules-ból kérje le, ne AXIOS-al: result.data.data[module_id].weight
+                    console.log(this.vehicleModules[`${this.getTest(module_type)}s`].find((object) => {
+                        return object.module_id === module_id;
+                    }))
+
+                    console.log(weight > this.vehicleCharacteristics.suspension.load_limit)
                     console.log(weight)
                     // nehezebb a modul mint a lánc teherbírása
-                    if(weight < this.vehicleCharacteristics.suspension.load_limit){
+                    if(weight > this.vehicleCharacteristics.suspension.load_limit){
                         // megvan, hogy a súly a gond
                         this.selectedVehicleModulesId.suspension_id = this.vehicleModules.suspensions[1].module_id
                         this.returnVehicleCharacteristics().then(withSuspension => {
@@ -184,14 +194,13 @@ export default {
                             }
                         })
                     }else{
-                        console.log('Ki kell választani az előző modult, és ha szintén az nehezebb mint a terhelési limit, feltenni a nagyobb láncot')
-                        
+                        console.log('Ki kell választani az előző modult, és ha szintén az nehezebb mint a terhelési limit, feltenni a nagyobb láncot, tehát jó még a lánc teherbírása')
                     }
                     // Hibák: 
                     // 1. Ezt visszafele is meg kell csinálni, ha aktív a lánc és visszateszem a default-ot
                     // 2. a check icon csak akkor legyen aktív, ha valóban megtörtént a váltás
-                // console.log('itt vok?')
-                })
+                // })
+                }
                 // 2. Van olyan eset amikor az előző modult kell feltenni. PL.: előbb egy turrret-et kell felrakni, aztán gun
 
             }
