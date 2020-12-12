@@ -63,6 +63,8 @@ import VehicleModules from './VehicleModules/Modules'
 import ModalHeader from './VehicleModalComponents/ModalHeader'
 import CrewSkills from './VehicleModalComponents/Crew'
 import TechTreeItem from './TechTree/TechTreeItem'
+
+import ModalHelper from '../../../WGClass/VehicleModalHelper/ModalHelper'
 // import Axios from 'axios'
 export default {
     name: 'Vehicle Modal',
@@ -110,11 +112,11 @@ export default {
             showNextTechTree: false,
             vehicleCharacteristics: {},
             vehicleModules: {
-                engines:[],
-                guns:[],
-                radios: [],
-                suspensions: [],
-                turrets: [],
+                engine:[],
+                gun:[],
+                radio: [],
+                suspension: [],
+                turret: [],
             },
             selectedVehicleModulesId: {
                 engine_id: 0,
@@ -152,7 +154,7 @@ export default {
                 this.showCharacteristics = true
             }
         },
-        async getTankCharacteristics(module_id = '', module_type = ''){
+        async getTankCharacteristics(module_id = '', module_type = '', vehicleModuleCategory = '', thElement){
             const characteristics = await this.returnVehicleCharacteristics().then(characteristic => {
                 return characteristic.data
             })
@@ -160,33 +162,25 @@ export default {
                 this.vehicleCharacteristics = characteristics.data[this.vehicle.tank_id]
                 this.showCharacteristics = true
             }else{
+                const weight = ((this.vehicleCharacteristics.weight - this.vehicleCharacteristics[ModalHelper.getModuleTypeName(module_type)].weight) + ModalHelper.returnVehicleModulesByModuleID(module_id, this.vehicleModules).weight)
                 // ide akkor lépünk be ha error van és a megelőző modult kell kiválasztani
-                // MEGOLDANI: Ha hibát dob az előző modult is ki kell választani, illetve ha túlterhelés van.
-
                 // 2 eset lehet: 
                 // 1. Ki kéne számolni, hogy az adott modult elbírja-e a lánc, ha nem fel kell rakni 
-                if (this.vehicleModules.suspensions[1].module_id !== this.vehicleCharacteristics.modules.suspension_id) {
-                    console.log('csak akkor vAGYOK itt ha nincs kihúzva a lánc, tehát be kell lépni. Magyarul alap lánc van fent')
-                    console.log('Meg kell vizsgálni, hogy a kiválasztott modult elbírja-e az alap lánc, ha nem: ')
-                    console.log('Fel kell tenni a másikat (lánc)')
-                    console.log('ha elbírja: meg kell nézni, hogy van-e előtte olyan modul amit fel kell tenni pl torony')
-                // await Axios.get(`https://api.worldoftanks.eu/wot/encyclopedia/modules/?application_id=1ebc47797ed02032c3c5489cbba60f6c&module_id=${module_id}&type=${module_type}&fields=weight`)
-                // .then(result => {
-                    const weight = ((this.vehicleCharacteristics.weight - this.vehicleCharacteristics[this.getTest(module_type)].weight) + this.vehicleModules[`${this.getTest(module_type)}s`].find((object) => {
-                        return object.module_id === module_id;
-                    }).weight)
+                if (this.vehicleModules.suspension[1].module_id !== this.vehicleCharacteristics.modules.suspension_id) {
+                    // console.log('csak akkor vAGYOK itt ha nincs kihúzva a lánc, tehát be kell lépni. Magyarul alap lánc van fent')
+                    // console.log('Meg kell vizsgálni, hogy a kiválasztott modult elbírja-e az alap lánc, ha nem: ')
+                    // console.log('Fel kell tenni a másikat (lánc)')
+                    // console.log('ha elbírja: meg kell nézni, hogy van-e előtte olyan modul amit fel kell tenni pl torony')
 
-                    // Megoldani, hogy a vehicle modules-ból kérje le, ne AXIOS-al: result.data.data[module_id].weight
-                    console.log(this.vehicleModules[`${this.getTest(module_type)}s`].find((object) => {
-                        return object.module_id === module_id;
-                    }))
+                    // const weight = ((this.vehicleCharacteristics.weight - this.vehicleCharacteristics[ModalHelper.getModuleTypeName(module_type)].weight) + this.returnVehicleModulesByModuleID(module_id).weight)
 
-                    console.log(weight > this.vehicleCharacteristics.suspension.load_limit)
-                    console.log(weight)
+                    // console.log(weight > this.vehicleCharacteristics.suspension.load_limit)
+                    // console.log(`súly: ${weight}`)
+                    // console.log(`lánc teher: ${this.vehicleCharacteristics.suspension.load_limit}`)
                     // nehezebb a modul mint a lánc teherbírása
                     if(weight > this.vehicleCharacteristics.suspension.load_limit){
                         // megvan, hogy a súly a gond
-                        this.selectedVehicleModulesId.suspension_id = this.vehicleModules.suspensions[1].module_id
+                        this.selectedVehicleModulesId.suspension_id = this.vehicleModules.suspension[1].module_id
                         this.returnVehicleCharacteristics().then(withSuspension => {
                             if(withSuspension.status != 'error'){
                                 // console.log(withSuspension.data.data[this.vehicleId])
@@ -195,49 +189,32 @@ export default {
                         })
                     }else{
                         console.log('Ki kell választani az előző modult, és ha szintén az nehezebb mint a terhelési limit, feltenni a nagyobb láncot, tehát jó még a lánc teherbírása')
+                        console.log(vehicleModuleCategory) 
+                        console.log(thElement)
+                        console.log(this.vehicleModules[vehicleModuleCategory][thElement - 1])
+
                     }
                     // Hibák: 
                     // 1. Ezt visszafele is meg kell csinálni, ha aktív a lánc és visszateszem a default-ot
                     // 2. a check icon csak akkor legyen aktív, ha valóban megtörtént a váltás
-                // })
                 }
-                // 2. Van olyan eset amikor az előző modult kell feltenni. PL.: előbb egy turrret-et kell felrakni, aztán gun
-
             }
         },
         async returnVehicleCharacteristics(){
             return await Vehicle.getVehicleCharacteristics(this.vehicle.tank_id, this.selectedVehicleModulesId)
         },
-        getTest(module_type){
-            let test = ''
-            switch (module_type) {
-                case 'vehicleTurret':
-                    test = 'turret'
-                    break
-                case 'vehicleRadio':
-                    test = 'radio'
-                    break
-                case 'vehicleGun':
-                    test = 'gun'
-                    break
-                case 'vehicleEngine':
-                    test = 'engine'
-                    break
-            }
-            return test
-        }, 
         async getVehicleModules(setArrayDefault = false){
             if(setArrayDefault){
                 this.setModuleArrayToDefault()
             }
             await Vehicle.getVehicleModules(this.makeModuleStringToSend(this.vehicle.modules_tree))
             .then(result => {
-                this.fillVehicleModules(this.vehicleModules.engines, result.data.data, this.vehicle.default_profile.modules.engine_id)
-                this.fillVehicleModules(this.vehicleModules.guns, result.data.data, this.vehicle.default_profile.modules.gun_id) 
-                this.fillVehicleModules(this.vehicleModules.radios, result.data.data, this.vehicle.default_profile.modules.radio_id)
-                this.fillVehicleModules(this.vehicleModules.suspensions, result.data.data, this.vehicle.default_profile.modules.suspension_id)
+                this.fillVehicleModules(this.vehicleModules.engine, result.data.data, this.vehicle.default_profile.modules.engine_id)
+                this.fillVehicleModules(this.vehicleModules.gun, result.data.data, this.vehicle.default_profile.modules.gun_id) 
+                this.fillVehicleModules(this.vehicleModules.radio, result.data.data, this.vehicle.default_profile.modules.radio_id)
+                this.fillVehicleModules(this.vehicleModules.suspension, result.data.data, this.vehicle.default_profile.modules.suspension_id)
                 if(this.vehicle.turrets.length > 0){ 
-                    this.fillVehicleModules(this.vehicleModules.turrets, result.data.data, this.vehicle.default_profile.modules.turret_id)
+                    this.fillVehicleModules(this.vehicleModules.turret, result.data.data, this.vehicle.default_profile.modules.turret_id)
                 }
             })
             this.showModules = true
@@ -344,11 +321,11 @@ export default {
             return parseInt(keys ? Object.keys(vehicleId)[0] : Object.values(vehicleId)[0])           
         },
         setModuleArrayToDefault(){
-            this.vehicleModules.engines = []
-            this.vehicleModules.guns = []
-            this.vehicleModules.radios = []
-            this.vehicleModules.suspensions = []
-            this.vehicleModules.turrets = []
+            this.vehicleModules.engine = []
+            this.vehicleModules.gun = []
+            this.vehicleModules.radio = []
+            this.vehicleModules.suspension = []
+            this.vehicleModules.turret = []
         }
     },
         
