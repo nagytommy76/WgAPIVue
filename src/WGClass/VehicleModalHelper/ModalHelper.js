@@ -27,4 +27,21 @@ export default class Player{
             }
             return result
     }
+
+    // this.vehicleModules[vehicleModuleCategory]
+    static returnVehicleModulesByFirstModuleFind(vehicleModules, vehicleModuleCategory){
+        const type = `vehicle${vehicleModuleCategory.charAt(0).toUpperCase() + vehicleModuleCategory.slice(1)}`
+        for (const [index, modules] of Object.entries(vehicleModules)) {
+            if (modules.type !== type) {
+                console.log(modules)
+                return index
+            }
+            // if (modules.type == type) {
+            //     if (vehicleModules[parseInt(index)+1].type !== type) {
+
+            //         // return parseInt(index)
+            //     }
+            // }
+        }
+    }
 }
