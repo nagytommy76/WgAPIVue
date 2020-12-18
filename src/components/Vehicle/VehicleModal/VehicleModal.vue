@@ -162,7 +162,11 @@ export default {
                 this.vehicleCharacteristics = characteristics.data[this.vehicle.tank_id]
                 this.showCharacteristics = true
             }else{
+                // El kéne dönteni, mielőtt kiszámolod, hogy több fajta modul van-e, mert ha igen akkor az előzőt is bele kell adni
                 const weight = ((this.vehicleCharacteristics.weight - this.vehicleCharacteristics[ModalHelper.getModuleTypeName(module_type)].weight) + ModalHelper.returnVehicleModulesByModuleID(module_id, this.vehicleModules).weight)
+                console.log(ModalHelper.returnVehicleModulesByModuleID(module_id, this.vehicleModules))
+                console.log(ModalHelper.testing(this.vehicleModules, vehicleModuleCategory, module_id))
+
                 // ide akkor lépünk be ha error van és a megelőző modult kell kiválasztani
                 // 2 eset lehet: 
                 // 1. Ki kéne számolni, hogy az adott modult elbírja-e a lánc, ha nem fel kell rakni 
@@ -191,16 +195,19 @@ export default {
                         })
                     }else{
                         // console.log('Ki kell választani az előző modult, és ha szintén az nehezebb mint a terhelési limit, feltenni a nagyobb láncot, tehát jó még a lánc teherbírása')
-                        console.log(vehicleModuleCategory) 
+                        // console.log(vehicleModuleCategory) 
                         // console.log(module_type)
-                        console.log(thElement)
+                        // console.log(thElement)
                         console.log(ModalHelper.returnVehicleModulesByFirstModuleFind(this.vehicleModules[vehicleModuleCategory], vehicleModuleCategory))
 
-                        let withPreviousModuleWeight = (this.vehicleCharacteristics.weight - this.vehicleCharacteristics[ModalHelper.getModuleTypeName(this.vehicleModules[vehicleModuleCategory][thElement -1].type)].weight) + this.vehicleModules[vehicleModuleCategory][ModalHelper.returnVehicleModulesByFirstModuleFind(this.vehicleModules[vehicleModuleCategory], vehicleModuleCategory)].weight
-                        // console.log(withPreviousModuleWeight)
+                        let withPreviousModuleWeight = (this.vehicleCharacteristics.weight - this.vehicleCharacteristics[ModalHelper.getModuleTypeName(this.vehicleModules[vehicleModuleCategory][ModalHelper.returnVehicleModulesByFirstModuleFind(this.vehicleModules[vehicleModuleCategory], vehicleModuleCategory)].type)].weight) + this.vehicleModules[vehicleModuleCategory][ModalHelper.returnVehicleModulesByFirstModuleFind(this.vehicleModules[vehicleModuleCategory], vehicleModuleCategory)].weight
+
+                        
+                        console.log(withPreviousModuleWeight)
 
                         // kiszámoltam a súlyt az előző modullal, és ha nehezebb...
                         if(withPreviousModuleWeight > this.vehicleCharacteristics.suspension.load_limit){
+                            console.log('hahhóó')
                             this.selectedVehicleModulesId.suspension_id = this.vehicleModules.suspension[1].module_id
                             this.selectedVehicleModulesId[`${vehicleModuleCategory}_id`] = this.vehicleModules[vehicleModuleCategory][thElement -1].module_id
                             this.returnVehicleCharacteristics().then(withSuspension => {
@@ -209,19 +216,19 @@ export default {
                                 }
                             })
                         }
-                        else{
-                            console.log('belefér még a súlyba')
-                            // this.selectedVehicleModulesId.suspension_id = this.vehicleModules.suspension[1].module_id
+                        // else{
+                        //     console.log('belefér még a súlyba')
+                        //     // this.selectedVehicleModulesId.suspension_id = this.vehicleModules.suspension[1].module_id
 
-                            this.selectedVehicleModulesId[`${vehicleModuleCategory}_id`] = this.vehicleModules[vehicleModuleCategory][thElement -1].module_id
+                        //     this.selectedVehicleModulesId[`${vehicleModuleCategory}_id`] = this.vehicleModules[vehicleModuleCategory][thElement -1].module_id
 
-                            this.returnVehicleCharacteristics().then(withSuspension => {
-                                console.log(withSuspension.data)
-                                if(withSuspension.data.status != 'error'){
-                                    this.vehicleCharacteristics = withSuspension.data.data[this.vehicleId]
-                                }
-                            })
-                        }
+                        //     this.returnVehicleCharacteristics().then(withSuspension => {
+                        //         console.log(withSuspension.data)
+                        //         if(withSuspension.data.status != 'error'){
+                        //             this.vehicleCharacteristics = withSuspension.data.data[this.vehicleId]
+                        //         }
+                        //     })
+                        // }
                     }
                     // Hibák: 
                     // 1. Ezt visszafele is meg kell csinálni, ha aktív a lánc és visszateszem a default-ot
