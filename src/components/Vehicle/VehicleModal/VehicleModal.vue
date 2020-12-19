@@ -154,7 +154,7 @@ export default {
                 this.showCharacteristics = true
             }
         },
-        async getTankCharacteristics(module_id = '', module_type = '', vehicleModuleCategory = '', thElement){
+        async getTankCharacteristics(module_id = '', module_type = '', vehicleModuleCategory = ''){
             const characteristics = await this.returnVehicleCharacteristics().then(characteristic => {
                 return characteristic.data
             })
@@ -163,78 +163,80 @@ export default {
                 this.showCharacteristics = true
             }else{
                 // El kéne dönteni, mielőtt kiszámolod, hogy több fajta modul van-e, mert ha igen akkor az előzőt is bele kell adni
-                const weight = ((this.vehicleCharacteristics.weight - this.vehicleCharacteristics[ModalHelper.getModuleTypeName(module_type)].weight) + ModalHelper.returnVehicleModulesByModuleID(module_id, this.vehicleModules).weight)
-                console.log(ModalHelper.returnVehicleModulesByModuleID(module_id, this.vehicleModules))
-                console.log(ModalHelper.testing(this.vehicleModules, vehicleModuleCategory, module_id))
+                // Ötlet, addig kéne az első láncot Disabled-re tenni, amíg a súly engedi
+                const moduleUserClicked = ModalHelper.returnVehicleModulesByModuleID(module_id, this.vehicleModules)
 
-                // ide akkor lépünk be ha error van és a megelőző modult kell kiválasztani
-                // 2 eset lehet: 
-                // 1. Ki kéne számolni, hogy az adott modult elbírja-e a lánc, ha nem fel kell rakni 
+                const foundModuleByID = this.vehicleModules[vehicleModuleCategory][ModalHelper.returnVehicleModulesByFirstModuleFind(this.vehicleModules[vehicleModuleCategory], vehicleModuleCategory)]
 
-                // if (this.vehicleModules.suspension[1].module_id !== this.vehicleCharacteristics.modules.suspension_id) {
+                const charasteristicsModuleType = this.vehicleCharacteristics[ModalHelper.getModuleTypeName(module_type)]
+                const weight = (this.vehicleCharacteristics.weight - charasteristicsModuleType.weight)
 
-                    // console.log('csak akkor vAGYOK itt ha nincs kihúzva a lánc, tehát be kell lépni. Magyarul alap lánc van fent')
-                    // console.log('Meg kell vizsgálni, hogy a kiválasztott modult elbírja-e az alap lánc, ha nem: ')
-                    // console.log('Fel kell tenni a másikat (lánc)')
-                    // console.log('ha elbírja: meg kell nézni, hogy van-e előtte olyan modul amit fel kell tenni pl torony')
+                let withPreviousModuleWeight = weight + moduleUserClicked.weight + foundModuleByID.weight
 
-                    // const weight = ((this.vehicleCharacteristics.weight - this.vehicleCharacteristics[ModalHelper.getModuleTypeName(module_type)].weight) + this.returnVehicleModulesByModuleID(module_id).weight)
+                if (ModalHelper.isDifferentModules(this.vehicleModules, vehicleModuleCategory, module_id)) {
+                    // Megvan, hogy különböző modulok vannak ezen az ágon, külön kell a súlyt kiszámolni az előző modullal együtt
+                    // Ehhez még hozzá kéne adni azt a modult amire kattintottam...
 
-                    // console.log(weight > this.vehicleCharacteristics.suspension.load_limit)
-                    // console.log(`súly: ${weight}`)
-                    // console.log(`lánc teher: ${this.vehicleCharacteristics.suspension.load_limit}`)
-                    // nehezebb a modul mint a lánc teherbírása
-                    
-                    if(weight > this.vehicleCharacteristics.suspension.load_limit){
-                        // megvan, hogy a súly a gond
-                        this.selectedVehicleModulesId.suspension_id = this.vehicleModules.suspension[1].module_id
+                    if(withPreviousModuleWeight > this.vehicleCharacteristics.suspension.load_limit){
+                        // console.log('különböző, nem fér a limitbe')
+                        // Itt több a súly a terhelési limittel, fel kell tenn mind2 modult
+                        this.setEnhancedSuspension()
+                        this.selectedVehicleModulesId[`${ModalHelper.getModuleTypeName(moduleUserClicked.type)}_id`] = moduleUserClicked.module_id
+                        this.setFirstFoundModuleID(foundModuleByID)
+
                         this.returnVehicleCharacteristics().then(withSuspension => {
                             if(withSuspension.data.status != 'error'){
                                 this.vehicleCharacteristics = withSuspension.data.data[this.vehicleId]
                             }
                         })
                     }else{
-                        // console.log('Ki kell választani az előző modult, és ha szintén az nehezebb mint a terhelési limit, feltenni a nagyobb láncot, tehát jó még a lánc teherbírása')
-                        // console.log(vehicleModuleCategory) 
-                        // console.log(module_type)
-                        // console.log(thElement)
-                        console.log(ModalHelper.returnVehicleModulesByFirstModuleFind(this.vehicleModules[vehicleModuleCategory], vehicleModuleCategory))
+                        // Belefér a terhelési limitbe
+                        // console.log('különböző, belefér a limitbe')
+                        this.selectedVehicleModulesId[`${ModalHelper.getModuleTypeName(moduleUserClicked.type)}_id`] = moduleUserClicked.module_id
+                        this.setFirstFoundModuleID(foundModuleByID)
 
-                        let withPreviousModuleWeight = (this.vehicleCharacteristics.weight - this.vehicleCharacteristics[ModalHelper.getModuleTypeName(this.vehicleModules[vehicleModuleCategory][ModalHelper.returnVehicleModulesByFirstModuleFind(this.vehicleModules[vehicleModuleCategory], vehicleModuleCategory)].type)].weight) + this.vehicleModules[vehicleModuleCategory][ModalHelper.returnVehicleModulesByFirstModuleFind(this.vehicleModules[vehicleModuleCategory], vehicleModuleCategory)].weight
-
-                        
-                        console.log(withPreviousModuleWeight)
-
-                        // kiszámoltam a súlyt az előző modullal, és ha nehezebb...
-                        if(withPreviousModuleWeight > this.vehicleCharacteristics.suspension.load_limit){
-                            console.log('hahhóó')
-                            this.selectedVehicleModulesId.suspension_id = this.vehicleModules.suspension[1].module_id
-                            this.selectedVehicleModulesId[`${vehicleModuleCategory}_id`] = this.vehicleModules[vehicleModuleCategory][thElement -1].module_id
-                            this.returnVehicleCharacteristics().then(withSuspension => {
-                                if(withSuspension.data.status != 'error'){
-                                    this.vehicleCharacteristics = withSuspension.data.data[this.vehicleId]
-                                }
-                            })
-                        }
-                        // else{
-                        //     console.log('belefér még a súlyba')
-                        //     // this.selectedVehicleModulesId.suspension_id = this.vehicleModules.suspension[1].module_id
-
-                        //     this.selectedVehicleModulesId[`${vehicleModuleCategory}_id`] = this.vehicleModules[vehicleModuleCategory][thElement -1].module_id
-
-                        //     this.returnVehicleCharacteristics().then(withSuspension => {
-                        //         console.log(withSuspension.data)
-                        //         if(withSuspension.data.status != 'error'){
-                        //             this.vehicleCharacteristics = withSuspension.data.data[this.vehicleId]
-                        //         }
-                        //     })
-                        // }
+                        this.returnVehicleCharacteristics().then(withSuspension => {
+                            if(withSuspension.data.status != 'error'){
+                                this.vehicleCharacteristics = withSuspension.data.data[this.vehicleId]
+                            }
+                        })
                     }
+                }else{
+                    // Egyforma modulok vannak:
+                    if (withPreviousModuleWeight > this.vehicleCharacteristics.suspension.load_limit) {
+                        // console.log('egyforma modulok, nem fér bele a limitbe')
+                        this.setEnhancedSuspension()
+                        this.setFirstFoundModuleID(foundModuleByID)
+                        this.returnVehicleCharacteristics().then(withSuspension => {
+                            if(withSuspension.data.status != 'error'){
+                                this.vehicleCharacteristics = withSuspension.data.data[this.vehicleId]
+                            }
+                        })
+                    }else{
+                        // console.log('egyforma, belefér a limitbe')
+                        // console.log(ModalHelper.getModuleTypeName(foundModuleByID.type))
+                        this.setFirstFoundModuleID(foundModuleByID)
+                        this.returnVehicleCharacteristics().then(withSuspension => {
+                            if(withSuspension.data.status != 'error'){
+                                this.vehicleCharacteristics = withSuspension.data.data[this.vehicleId]
+                            }
+                        })
+                    }
+                }
+                // ide akkor lépünk be ha error van és a megelőző modult kell kiválasztani
+                // 2 eset lehet: 
+                // 1. Ki kéne számolni, hogy az adott modult elbírja-e a lánc, ha nem fel kell rakni 
                     // Hibák: 
                     // 1. Ezt visszafele is meg kell csinálni, ha aktív a lánc és visszateszem a default-ot
                     // 2. a check icon csak akkor legyen aktív, ha valóban megtörtént a váltás
                 // }
             }
+        },
+        setFirstFoundModuleID(foundModuleByID){
+            this.selectedVehicleModulesId[`${ModalHelper.getModuleTypeName(foundModuleByID.type)}_id`] = foundModuleByID.module_id
+        },
+        setEnhancedSuspension(){
+            this.selectedVehicleModulesId.suspension_id = this.vehicleModules.suspension[1].module_id
         },
         async returnVehicleCharacteristics(){
             return await Vehicle.getVehicleCharacteristics(this.vehicle.tank_id, this.selectedVehicleModulesId)
