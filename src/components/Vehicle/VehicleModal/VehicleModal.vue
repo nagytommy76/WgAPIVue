@@ -330,21 +330,34 @@ export default {
             let currentVehicleModule = this.vehicle.modules_tree[resultData[defaultModuleId].module_id];
             // Ha a jelenlegi járműnek a lekért modul_id-nek a next module-ja nem null, tehát ha van következő modul...
             if(currentVehicleModule.next_modules != null){
-                let nextModuleId = currentVehicleModule.next_modules[0];
+                let nextModuleId = currentVehicleModule.next_modules
                 // Amíg van k9vetkező modul, push-olom sorrendbe a vehicleModules-ba
-                // Sorrend hogy jön ki: A modules_tree-ben fel van építve a soron következő modul id-je, ez alapján rakom bele
-                // Az a baj, hogy pl a Conqueror-nál a turret ágon van egy gun... A lényeg, hogy típus függetlenül menjen a dolog
-                while(nextModuleId != null){
-                    moduleTypeArray.push(resultData[nextModuleId]) 
-                    // console.log(nextModuleId)         
-                    if (this.vehicle.modules_tree[nextModuleId] != undefined && this.vehicle.modules_tree[nextModuleId].next_modules != null){ 
-                        // console.log(this.vehicle.modules_tree[nextModuleId])                      
-                        // nextModuleId = this.vehicle.modules_tree[resultData[nextModuleId].module_id].next_modules[0]
-                        nextModuleId = this.vehicle.modules_tree[nextModuleId].next_modules[0]
-                    }else{
-                        nextModuleId = null
+                // Hiba: van olyan eset amikor egy ágon belül 2 választási lehetőség van (2 elem van a next modules-ban) 
+                // for (const [key, item] of Object.entries(nextModuleId)) {
+                //     console.log(`${key} : ${item}`)
+                //     moduleTypeArray.push(resultData[item])
+                //     if (this.vehicle.modules_tree[item] !== undefined && this.vehicle.modules_tree[item].next_modules !== null) {
+                //         nextModuleId = this.vehicle.modules_tree[item].next_modules[key]
+                //     }
+                // }
+                if (nextModuleId.length == 1) {
+                    while(nextModuleId[0] != null){
+                        moduleTypeArray.push(resultData[nextModuleId[0]])      
+                        if (this.vehicle.modules_tree[nextModuleId[0]] != undefined && this.vehicle.modules_tree[nextModuleId[0]].next_modules != null){                
+                            nextModuleId[0] = this.vehicle.modules_tree[nextModuleId[0]].next_modules[0]
+                        }else{
+                            nextModuleId[0] = null
+                        }
+                    }      
+                }else{
+                    for (const [key, item] of Object.entries(nextModuleId)) {
+                        console.log(`${key} : ${item}`)
+                        moduleTypeArray.push(resultData[item])
+                        if (this.vehicle.modules_tree[item] !== undefined && this.vehicle.modules_tree[item].next_modules !== null) {
+                            nextModuleId = this.vehicle.modules_tree[item].next_modules[key]
+                        }
                     }
-                } 
+                }
             }
         },
         fillTechTreeObjects(vehicleData, resultData, tankID, ResearchXp = 0){
