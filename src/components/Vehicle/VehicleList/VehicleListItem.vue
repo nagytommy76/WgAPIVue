@@ -1,6 +1,6 @@
 <template>
     <div class="table-view-body-row modal-open">
-        <ListTableCol v-if="inGarage" :className="'full-size'">
+        <ListTableCol v-if="inGarage && mobileWidth" :className="'full-size'">
             <template v-slot:optional>
                 <Tooltip>
                     <template v-slot:main>           
@@ -30,6 +30,7 @@
             </template>
         </ListTableCol>
         <ListTableCol 
+            v-if="mobileWidth"
             :data="VehicleTier"
         />
         <ListTableCol 
@@ -37,13 +38,16 @@
             :optional="'Hp'"
         />
         <ListTableCol 
+            v-if="mobileWidth"
             :data="gunAimTime"
             :optional="'s'"
         />
-        <ListTableCol 
+        <ListTableCol
+            v-if="mobileWidth" 
             :data="gunDispersion"
         />
         <ListTableCol 
+            v-if="mobileWidth"
             :data="weight"
             :optional="'Kg'"
         />
@@ -53,6 +57,7 @@
 import Tooltip from '../../inc/Tooltip'
 import ListTableCol from './ListTableCol'
 import PlayerStat from '../PlayersVehicles/PlayerStatics'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'Vehicle List Item',
@@ -76,6 +81,9 @@ export default {
         inGarage(){
             return this.playerStatWithVehicle !== undefined ? true : false;
         },
+        ...mapGetters({
+            mobileWidth: 'getMobileWidth'
+        })
     },
 }
 </script>

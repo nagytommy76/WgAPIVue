@@ -9,7 +9,7 @@
 
 .card{
     padding: 1.4rem;
-    margin: auto;
+    margin: 0 auto;
     width: 350px;
     border-radius: 10px;
     display: flex;
@@ -22,5 +22,12 @@
     &-dark{
         color: white;
         background-color: $dark;
+    }
+}
+
+@media(max-width: 700px){
+    .card{
+        padding: .5rem;
+        width: 300px;
     }
 }

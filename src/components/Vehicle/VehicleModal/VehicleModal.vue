@@ -12,7 +12,7 @@
             />
             <div class="modal-body">
                 <VehicleModules 
-                    v-if="showModules"
+                    v-if="showModules && mobileWidth"
                     :modules="vehicleModules"
                 />
                 <VehicleDetails 
@@ -20,6 +20,7 @@
                     :Characteristics="vehicleCharacteristics"
                 />
                 <CrewSkills 
+                    v-if="mobileWidth"
                     :crew="vehicle.crew"
                     :crewNation="vehicle.nation"
                 />
@@ -65,7 +66,7 @@ import CrewSkills from './VehicleModalComponents/Crew'
 import TechTreeItem from './TechTree/TechTreeItem'
 
 import ModalHelper from '../../../WGClass/VehicleModalHelper/ModalHelper'
-// import Axios from 'axios'
+import { mapGetters } from 'vuex'
 export default {
     name: 'Vehicle Modal',
     components:{
@@ -80,6 +81,9 @@ export default {
         allVehicles: Object,
     },
     computed: {
+        ...mapGetters({
+            mobileWidth: 'getMobileWidth',
+        }),
         vehicle:{
             get(){
                 return this.allVehicles[this.selectedVehicleId]
@@ -333,13 +337,6 @@ export default {
                 let nextModuleId = currentVehicleModule.next_modules
                 // Amíg van k9vetkező modul, push-olom sorrendbe a vehicleModules-ba
                 // Hiba: van olyan eset amikor egy ágon belül 2 választási lehetőség van (2 elem van a next modules-ban) 
-                // for (const [key, item] of Object.entries(nextModuleId)) {
-                //     console.log(`${key} : ${item}`)
-                //     moduleTypeArray.push(resultData[item])
-                //     if (this.vehicle.modules_tree[item] !== undefined && this.vehicle.modules_tree[item].next_modules !== null) {
-                //         nextModuleId = this.vehicle.modules_tree[item].next_modules[key]
-                //     }
-                // }
                 if (nextModuleId.length == 1) {
                     while(nextModuleId[0] != null){
                         moduleTypeArray.push(resultData[nextModuleId[0]])      
@@ -350,11 +347,34 @@ export default {
                         }
                     }      
                 }else{
-                    for (const [key, item] of Object.entries(nextModuleId)) {
-                        console.log(`${key} : ${item}`)
-                        moduleTypeArray.push(resultData[item])
-                        if (this.vehicle.modules_tree[item] !== undefined && this.vehicle.modules_tree[item].next_modules !== null) {
-                            nextModuleId = this.vehicle.modules_tree[item].next_modules[key]
+                    console.log('halló')
+                    for (const item of nextModuleId) {
+                        let helper = true
+                        let tempModuleId = item;
+                        while(helper){
+                            moduleTypeArray.push(resultData[tempModuleId])
+                            if (this.vehicle.modules_tree[tempModuleId] !== undefined && this.vehicle.modules_tree[tempModuleId].next_modules !== null) {
+                                if (this.vehicle.modules_tree[tempModuleId].next_modules.length > 1) {
+                                    for (const subItem of this.vehicle.modules_tree[tempModuleId].next_modules) {
+                                        let help = true
+                                        let tempID = subItem
+                                        while (help) {
+                                            moduleTypeArray.push(resultData[tempID])
+                                            if (this.vehicle.modules_tree[tempID] !== undefined && this.vehicle.modules_tree[tempID].next_modules !== null) {
+                                                tempID = this.vehicle.modules_tree[tempID].next_modules[0]
+                                            }else{
+                                                help = false
+                                            }
+                                        }
+                                    }
+                                    helper = false
+                                }else{
+                                    console.log('csak 1 van')
+                                    tempModuleId = this.vehicle.modules_tree[tempModuleId].next_modules[0]
+                                }
+                            }else{
+                                helper = false
+                            }
                         }
                     }
                 }

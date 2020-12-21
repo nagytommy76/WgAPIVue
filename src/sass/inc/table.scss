@@ -60,3 +60,11 @@ $col-width: 7rem;
 .modal-open{
     cursor: pointer;
 }
+
+@media(max-width: 700px){
+    .table-view{
+        &-header{
+            display: none;
+        }
+    }
+}

@@ -18,8 +18,12 @@ export default class Player{
         return test
     }
 
+    static getType(vehicleModuleCategory){
+        return `vehicle${vehicleModuleCategory.charAt(0).toUpperCase() + vehicleModuleCategory.slice(1)}`
+    }
+
     static isDifferentModules(vehicleModules,vehicleModuleCategory){
-        const type = `vehicle${vehicleModuleCategory.charAt(0).toUpperCase() + vehicleModuleCategory.slice(1)}`
+        const type = this.getType(vehicleModuleCategory)
         for (const modules of Object.values(vehicleModules[vehicleModuleCategory])) {          
             if (modules.type !== type) {
                return true
@@ -31,8 +35,9 @@ export default class Player{
     static returnVehicleModulesByModuleID(module_id, vehicleModules){
         let result = [];
         for (const modules of Object.values(vehicleModules)) {
-            if(modules.find((element) => element.module_id === module_id) !== undefined){
-                result = modules.find((element) => element.module_id === module_id)
+            const foundElement = modules.find((element) => element.module_id === module_id)
+            if(foundElement !== undefined){
+                result = foundElement
             }            
         }
         return result
@@ -40,7 +45,7 @@ export default class Player{
 
     // this.vehicleModules[vehicleModuleCategory]
     static returnVehicleModulesByFirstModuleFind(vehicleModules, vehicleModuleCategory){
-        const type = `vehicle${vehicleModuleCategory.charAt(0).toUpperCase() + vehicleModuleCategory.slice(1)}`
+        const type = this.getType(vehicleModuleCategory)
         const foundElements = vehicleModules.filter(element => element.type === type)
         return foundElements.length -1
     }
