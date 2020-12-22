@@ -1,6 +1,6 @@
 <template>
     <div class="table-view-body-row modal-open">
-        <ListTableCol v-if="inGarage && mobileWidth" :className="'full-size'">
+        <ListTableCol v-if="inGarage && !mobileWidth" :className="'full-size'">
             <template v-slot:optional>
                 <Tooltip>
                     <template v-slot:main>           
@@ -30,7 +30,7 @@
             </template>
         </ListTableCol>
         <ListTableCol 
-            v-if="mobileWidth"
+            v-if="!mobileWidth"
             :data="VehicleTier"
         />
         <ListTableCol 
@@ -38,16 +38,16 @@
             :optional="'Hp'"
         />
         <ListTableCol 
-            v-if="mobileWidth"
+            v-if="!mobileWidth"
             :data="gunAimTime"
             :optional="'s'"
         />
         <ListTableCol
-            v-if="mobileWidth" 
+            v-if="!mobileWidth" 
             :data="gunDispersion"
         />
         <ListTableCol 
-            v-if="mobileWidth"
+            v-if="!mobileWidth"
             :data="weight"
             :optional="'Kg'"
         />

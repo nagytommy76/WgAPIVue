@@ -305,19 +305,22 @@ $modal-background: rgb(28,28,30);
     }
 }
 @media(max-width: 700px){
-    .close-modal{
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        color: white;
-        i{
-            font-size: 1.8rem;
-        }
+.close-modal{
+    position: fixed;
+    z-index: 1;
+    top: 10px;
+    right: 10px;
+    i{
+        font-size: 1.8rem;
     }
+}
 .modal-background{
     .modal{
+        display: flex;
+        flex-direction: column;
         overflow-y: scroll;
-        min-height: 100%;
+        min-height: 100vh;
+        width: 100%;
         &-head{
             position: relative;
             .vehicle-head{
@@ -329,27 +332,52 @@ $modal-background: rgb(28,28,30);
                 &-name{
                     font-size: 1rem;
                 }
-            }
-            
+            }            
         }
         &-body{
-            display: grid;
-            margin: 0rem 1rem;
-            max-width: 100%;
-            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            width: 100%;
+            // min-height: 120%;
             .left{
                 display: none;
             }
             .right{
-                position: relative;
-                grid-column: 1 / span 1;
-                justify-content: center;
                 margin-left: 0;
+                .specification{ 
+                    grid-template-rows: unset;                   
+                    &-row{
+                        flex-direction: column;
+                    }
+                    &-block{
+                        min-height: 100px;
+                        min-width: 100%;
+                        margin: .7rem;
+                        .specification-title{
+                            font-size: 1.1rem;
+                        }
+                        .specification-item{
+                            font-size: .9rem;          
+                        }
+                    }
+                }
+            }
+            .crew-skills{
+                display: grid;
+                grid-template-columns: repeat(2, 150px);
+                width: 100%;
+                justify-content: center;
+                margin: auto;
+                &-item{
+                    margin: auto;
+                    max-width: 120px;
+                }
             }
         }
         &-footer{
-            bottom: 0;
-            min-height: 500px;
+            min-height: 600px;
+            margin-top: auto;
             flex-direction: column;
             justify-content: flex-end;
             .tech-tree-row{
@@ -358,32 +386,11 @@ $modal-background: rgb(28,28,30);
                 justify-content: center;
                 .tech-tree-item{
                     width: 220px;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
+                    margin-bottom: .6rem;
                 }
             }
         }
     }
-    .specification{
-        min-height: 100%;
-        width: 100%;
-        flex-direction: column;
-        &-row{
-            flex-direction: column;
-        }
-        &-block{
-            min-height: 100px;
-            width: 210px;
-            margin: .7rem;
-            .specification-title{
-                font-size: 1.1rem;
-            }
-            .specification-item{
-                font-size: .9rem;          
-            }
-        }
-    }
+    
 }
 }

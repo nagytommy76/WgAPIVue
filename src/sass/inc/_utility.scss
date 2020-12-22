@@ -36,8 +36,8 @@ li{
     position: relative;
     display: inline-block;
     &-text{
-        opacity: 1;
-        visibility: visible;
+        opacity: 0;
+        visibility: hidden;
         -webkit-transition: opacity .4s, visibility .4s;
         transition: opacity .4s, visibility .4s;
         position: absolute;

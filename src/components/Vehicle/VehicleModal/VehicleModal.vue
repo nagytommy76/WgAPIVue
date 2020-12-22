@@ -12,20 +12,19 @@
             />
             <div class="modal-body">
                 <VehicleModules 
-                    v-if="showModules && mobileWidth"
+                    v-if="showModules && !mobileWidth"
                     :modules="vehicleModules"
                 />
                 <VehicleDetails 
                     v-if="showCharacteristics"
                     :Characteristics="vehicleCharacteristics"
                 />
-                <CrewSkills 
-                    v-if="mobileWidth"
+                <CrewSkills
                     :crew="vehicle.crew"
                     :crewNation="vehicle.nation"
                 />
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" v-if="showTechTree">
                 <div class="tech-tree-row">
                     <TechTreeItem 
                         v-if="showPreviousTechTree"
@@ -111,6 +110,7 @@ export default {
                 big_icon: '',
                 price_credits: 0,
             },
+            showTechTree: true,
             showPreviousTechTree: false,
             showCurrentTechTree: false,
             showNextTechTree: false,
@@ -134,8 +134,10 @@ export default {
         }
     },
     created(){
-        this.getVehicleModules()
-        this.fillSelectedModulesId()
+        if (!this.mobileWidth) {
+            this.getVehicleModules()
+        }
+        this.fillSelectedModulesId()            
         this.getNextVehicle()
         this.getTankCharacteristicsFirsTime()
     },
@@ -276,7 +278,12 @@ export default {
 
                         this.showCurrentTechTree = true
                         this.showPreviousTechTree = true
+                        this.showTechTree = true
                     })
+                }else{
+                    // Ha nincs se előtte, se utána, nem jelenítem meg a tech tree-t
+                    this.showTechTree = false
+                    console.log()
                 }
             }else{
                 // Ha van kövi tank
@@ -297,6 +304,7 @@ export default {
                         this.showPreviousTechTree = true
                         this.showCurrentTechTree = true
                         this.showNextTechTree = true
+                        this.showTechTree = true
                     })
                 }else{
                     let nextTankResearchXp = this.getObjectKeysInInteger(this.vehicle.next_tanks, false)
@@ -308,6 +316,7 @@ export default {
 
                         this.showCurrentTechTree = true
                         this.showNextTechTree = true
+                        this.showTechTree = true
                     })
                 }
             }

@@ -15,5 +15,8 @@
 @media(max-width: 700px){
     .vehicle{
         flex-direction: column;
+        .vehicleSearch{
+            margin: 1rem 0;
+        }
     }
 }

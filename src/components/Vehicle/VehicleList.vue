@@ -51,7 +51,6 @@ export default {
     data() {
         return {
             showVehicleModal : false,
-            // selectedVehicle: this.vehicles.data,
             selectedVehicleId: 0,
         }
     },
