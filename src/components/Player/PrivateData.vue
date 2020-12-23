@@ -21,15 +21,7 @@
             <div class="stat_item">
                 <span class="stat_value">{{ privateData.gold }}</span>
                 <span class="stat_text">Gold</span>
-            </div> 
-            <div class="stat_item">
-                <span class="stat_value">{{ timestampConvert(privateData.premium_expires_at) }}</span>
-                <span class="stat_text">Gold</span>
-            </div> 
-            <div v-show="privateData.restrictions == null" class="stat_item">
-                <span class="stat_value">{{timestampConvert(privateData.restrictions.chat_ban_time)}}</span>
-                <span class="stat_text">Chat ban time until</span>
-            </div>
+            </div>  
         </div>
     </div>
 </template>

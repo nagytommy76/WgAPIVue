@@ -3,7 +3,7 @@
         <div class="crew-skills-item" v-for="(member,index) in crew" :key="index">
             <h3>{{ member.roles[member.member_id] }}</h3>
             <img class="crew-image" :src="this.getCrewImages(index+1)" alt="Crew Member">
-            <div class="crew-tooltip">
+            <div class="crew-tooltip" v-if="!mobileWidth">
                 <div class="crew-tooltip-text">
                     <p class="role-names" v-for="(roles, roleIndex) in member.roles" :key="roleIndex">
                         {{roles}}
@@ -20,6 +20,7 @@
 <script>
 import CrewSkills from './CrewSkills'
 import axios from 'axios'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'Crew Members',
@@ -29,6 +30,11 @@ export default {
     },
     components:{
         CrewSkills,
+    },
+    computed:{
+        ...mapGetters({
+            mobileWidth: 'getMobileWidth'
+        }),
     },
     data() {
         return {
@@ -42,7 +48,9 @@ export default {
         }
     },
     created() {
-        this.getCrewQualifications()
+        if (!this.mobileWidth) {
+            this.getCrewQualifications()
+        }
     },
     methods:{
         getCrewImages(iteration){

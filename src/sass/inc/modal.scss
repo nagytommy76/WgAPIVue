@@ -263,7 +263,7 @@ $modal-background: rgb(28,28,30);
         align-items: center;
         .modules-item{
             width: 110px;
-            max-height: 100px;
+            min-height: 100px;
             margin-right: .5rem;
             position: relative;
             transition: background .3s;

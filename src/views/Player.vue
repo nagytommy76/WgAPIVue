@@ -1,5 +1,5 @@
 <template>
-<div class="player container">
+<div class="player">
   <section class="playerSearch">
     <div class="card card-dark">
       <h1 class="card-title">Searching players</h1>
