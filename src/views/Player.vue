@@ -57,7 +57,6 @@ export default {
           this.isFound = true
           this.foundPlayers = response.data
           if(response.meta.count == 1){
-            // this.getPlayerDetails(this.foundPlayers[0].account_id)
             Player.getPlayerData(this.server, this.foundPlayers[0].account_id, this.$store.getters.getAccessToken)
             .then(result =>{
               this.playerInfo = result.data[this.foundPlayers[0].account_id]
