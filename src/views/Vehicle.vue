@@ -42,8 +42,8 @@
         </section>
         <VehicleList
             v-if="showVehicleList"
-            :vehicles="vehicles"
             :allVehicles="allVehicles"
+            :vehicles="vehicles"
             :playersVehicleStat="playersVehicleStat"
         />
     </div>

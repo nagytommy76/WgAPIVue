@@ -14,6 +14,12 @@
                 <VehicleModules 
                     v-if="showModules && !mobileWidth"
                     :modules="vehicleModules"
+                    @selected-engineid="updateSelectedEngineID"
+                    @selected-gunid="updateSelectedGunID"
+                    @selected-radioid="updateSelectedRadioID"
+                    @selected-suspensionid="updateSelectedSuspensionID"
+                    @selected-selected-turretid="updateSelectedTurretID"
+                    @get-tank-characteristics="getTankCharacteristics"
                 />
                 <VehicleDetails 
                     v-if="showCharacteristics"
@@ -142,6 +148,21 @@ export default {
         this.getTankCharacteristicsFirsTime()
     },
     methods:{
+        updateSelectedEngineID(engine_id){
+            this.selectedVehicleModulesId.engine_id = engine_id
+        },
+        updateSelectedGunID(gun_id){
+            this.selectedVehicleModulesId.gun_id = gun_id
+        },
+        updateSelectedRadioID(radio_id){
+            this.selectedVehicleModulesId.radio_id = radio_id
+        },
+        updateSelectedSuspensionID(suspension_id){
+            this.selectedVehicleModulesId.suspension_id = suspension_id
+        },
+        updateSelectedTurretID(turret_id){
+            this.selectedVehicleModulesId.turret_id = turret_id
+        },
         // Ezek az alap (STOCK) modulok
         fillSelectedModulesId(){
             this.selectedVehicleModulesId.engine_id = this.vehicle.default_profile.modules.engine_id

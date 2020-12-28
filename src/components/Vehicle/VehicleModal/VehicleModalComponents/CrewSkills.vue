@@ -14,14 +14,10 @@
     </div>
 </template>
 <script>
-import Tooltip from '../../../inc/Tooltip'
 export default {
     name: 'Crew Skills',
     props:{
         crewMemeberQualification: Object,
     },
-    components:{
-        Tooltip,
-    }
 }
 </script>

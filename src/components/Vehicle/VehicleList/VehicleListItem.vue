@@ -54,7 +54,6 @@
     </div>
 </template>
 <script>
-import Tooltip from '../../inc/Tooltip'
 import ListTableCol from './ListTableCol'
 import PlayerStat from '../PlayersVehicles/PlayerStatics'
 import { mapGetters } from 'vuex'
@@ -62,7 +61,6 @@ import { mapGetters } from 'vuex'
 export default {
     name: 'Vehicle List Item',
     components:{
-        Tooltip,
         PlayerStat,
         ListTableCol,
     },
